@@ -13,9 +13,9 @@ const TipsVideos = () => {
 
   const videos = [
     { id: 1, title: 'BENEFICIOS DEL RECICLAJE ♻ ¿Qué es el reciclaje?', url: 'https://www.youtube.com/embed/5q2HSdgO7CA?si=UayP5pfjpgOpMbPM' },
-    { id: 2, title: 'Qué es el RECICLAJE y por qué es IMPORTANTE? ', url: 'https://www.youtube.com/embed/uaI3PLmAJyM?si=f2oCNbeMo1Gzcfph' },
+    { id: 2, title: 'Qué es el RECICLAJE y por qué es IMPORTANTE?', url: 'https://www.youtube.com/embed/uaI3PLmAJyM?si=f2oCNbeMo1Gzcfph' },
     { id: 3, title: 'Plaza Sésamo: Elmo aprende sobre el reciclaje', url: 'https://www.youtube.com/embed/haR08SGmwfs?si=XtaOYUXT0mrrING9' },
-    { id: 4, title: 'La IMPORTANCIA de RECICLAR para el MEDIO AMBIENTE ', url: 'https://www.youtube.com/embed/cvakvfXj0KE?si=MwC_9PXeJ_hPwTyH' },
+    { id: 4, title: 'La IMPORTANCIA de RECICLAR para el MEDIO AMBIENTE', url: 'https://www.youtube.com/embed/cvakvfXj0KE?si=MwC_9PXeJ_hPwTyH' },
     { id: 5, title: '¿Cómo reciclar? Aprende con Nacho las 3 R del reciclaje', url: 'https://www.youtube.com/embed/WVrxkF6TcQU?si=ty_OGkjA95OYExHD' },
   ];
 
@@ -24,6 +24,7 @@ const TipsVideos = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Tips y Videos de Reciclaje</h2>
 
+        {/* Tips */}
         <div className="mb-8">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Tips Rápidos</h3>
           <ul className="space-y-4">
@@ -39,6 +40,7 @@ const TipsVideos = () => {
           </ul>
         </div>
 
+        {/* Videos */}
         <div>
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Videos Educativos</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -46,9 +48,9 @@ const TipsVideos = () => {
             {videos.slice(0, 4).map(video => (
               <div
                 key={video.id}
-                className="bg-gray-100 p-4 rounded-lg shadow-sm"
+                className="bg-gray-100 p-4 rounded-lg shadow-sm flex flex-col items-center"
               >
-                <h4 className="font-semibold text-gray-700 mb-2">{video.title}</h4>
+                <h4 className="font-semibold text-gray-700 mb-2 text-center">{video.title}</h4>
                 <iframe
                   width="560"
                   height="315"
@@ -57,27 +59,26 @@ const TipsVideos = () => {
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
-                  className="rounded-lg w-full"
-                  style={{ maxWidth: '560px', height: '315px' }}
+                  className="rounded-lg"
                 ></iframe>
               </div>
             ))}
+          </div>
 
-            {/* Quinto video centrado y en mitad del ancho */}
-            <div className="md:col-span-2 flex justify-center">
-              <div className="bg-gray-100 p-4 rounded-lg shadow-sm" style={{ width: '280px' }}>
-                <h4 className="font-semibold text-gray-700 mb-2">{videos[4].title}</h4>
-                <iframe
-                  width="280"
-                  height="158" // Mantiene 16:9 pero mitad de tamaño
-                  src={videos[4].url}
-                  title={videos[4].title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="rounded-lg w-full"
-                ></iframe>
-              </div>
+          {/* Quinto video centrado y del mismo tamaño */}
+          <div className="flex justify-center mt-8">
+            <div className="bg-gray-100 p-4 rounded-lg shadow-sm flex flex-col items-center">
+              <h4 className="font-semibold text-gray-700 mb-2 text-center">{videos[4].title}</h4>
+              <iframe
+                width="560"
+                height="315"
+                src={videos[4].url}
+                title={videos[4].title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="rounded-lg"
+              ></iframe>
             </div>
           </div>
         </div>

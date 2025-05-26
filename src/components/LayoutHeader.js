@@ -18,46 +18,23 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
 
   const menuItems = (
     <>
-      <li>
+      {[
+        { name: 'Mapa', page: 'mapa' },
+        { name: 'Solicitud', page: 'solicitud' },
+        { name: 'Consejos y Avisos', page: 'tips' },
+        { name: 'Usuario', page: 'usuario' },
+        { name: 'Mascota', page: 'mascota' },
+      ].map(({ name, page }) => (
         <button
-          onClick={() => handlePageChange('mapa')}
-          className={`px-4 py-2 text-gray-600 hover:text-green-600 ${currentPage === 'mapa' ? 'font-semibold text-green-600' : ''}`}
+          key={page}
+          onClick={() => handlePageChange(page)}
+          className={`px-4 py-2 text-gray-600 transition-all duration-200 
+            hover:text-green-600 hover:scale-105 
+            ${currentPage === page ? 'text-green-600 text-lg font-semibold scale-110' : ''}`}
         >
-          Mapa
+          {name}
         </button>
-      </li>
-      <li>
-        <button
-          onClick={() => handlePageChange('solicitud')}
-          className={`px-4 py-2 text-gray-600 hover:text-green-600 ${currentPage === 'solicitud' ? 'font-semibold text-green-600' : ''}`}
-        >
-          Solicitud
-        </button>
-      </li>
-      <li>
-        <button
-          onClick={() => handlePageChange('tips')}
-          className={`px-4 py-2 text-gray-600 hover:text-green-600 ${currentPage === 'tips' ? 'font-semibold text-green-600' : ''}`}
-        >
-          Consejos y Avisos
-        </button>
-      </li>
-      <li>
-        <button
-          onClick={() => handlePageChange('usuario')}
-          className={`px-4 py-2 text-gray-600 hover:text-green-600 ${currentPage === 'usuario' ? 'font-semibold text-green-600' : ''}`}
-        >
-          Usuario
-        </button>
-      </li>
-      <li>
-        <button
-          onClick={() => handlePageChange('mascota')}
-          className={`px-4 py-2 text-gray-600 hover:text-green-600 ${currentPage === 'mascota' ? 'font-semibold text-green-600' : ''}`}
-        >
-          Mascota
-        </button>
-      </li>
+      ))}
     </>
   );
 
@@ -66,10 +43,10 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-green-600">EcoRide</h1>
 
-        {/* Menú completo en pantallas medianas en adelante */}
-        <nav className="hidden md:flex gap-4">{menuItems}</nav>
+        {/* Menú completo en pantallas grandes */}
+        <nav className="hidden md:flex items-center gap-4">{menuItems}</nav>
 
-        {/* Botón de menú en móviles */}
+        {/* Menú en celular */}
         <div className="relative md:hidden">
           <button
             onClick={handleDropdownToggle}
@@ -77,9 +54,29 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
           >
             Menú
           </button>
+
           {isDropdownOpen && (
-            <nav className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
-              <ul className="flex flex-col">{menuItems}</ul>
+            <nav className="absolute right-0 mt-2 w-screen bg-white border-t border-gray-200 shadow-lg z-20">
+              <ul className="flex flex-col items-center py-4 space-y-2 list-none">
+                {[
+                  { name: 'Mapa', page: 'mapa' },
+                  { name: 'Solicitud', page: 'solicitud' },
+                  { name: 'Consejos y Avisos', page: 'tips' },
+                  { name: 'Usuario', page: 'usuario' },
+                  { name: 'Mascota', page: 'mascota' },
+                ].map(({ name, page }) => (
+                  <li key={page}>
+                    <button
+                      onClick={() => handlePageChange(page)}
+                      className={`text-gray-600 transition-all duration-200 px-4 py-2 
+                        hover:text-green-600 hover:scale-105 
+                        ${currentPage === page ? 'text-green-600 text-lg font-semibold scale-110' : ''}`}
+                    >
+                      {name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </nav>
           )}
         </div>

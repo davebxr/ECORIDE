@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const UsuarioProfile = ({ userData }) => {
+const UsuarioProfile = ({ userData, onLogout }) => {
+  const navigate = useNavigate();
+
   if (!userData) {
     return (
       <div className="container mx-auto px-4 py-8 mt-16 text-center">
@@ -9,10 +12,28 @@ const UsuarioProfile = ({ userData }) => {
     );
   }
 
+  const handleImageClick = () => {
+    navigate('/InicioAnimado');
+  };
+
+  const handleLogout = () => {
+    if (onLogout) onLogout(); // ejecuta la función si se pasó
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Perfil de Usuario</h2>
+
+        <div className="flex flex-col items-center mb-6">
+          {/* Imagen de perfil circular */}
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/149/149071.png" // puedes cambiar esta URL
+            alt="Usuario"
+            className="w-24 h-24 rounded-full cursor-pointer border-4 border-green-400 hover:opacity-90 transition"
+            onClick={handleImageClick}
+          />
+          <h2 className="text-2xl font-bold text-gray-800 mt-4">Perfil de Usuario</h2>
+        </div>
 
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Información Personal</h3>
@@ -28,7 +49,7 @@ const UsuarioProfile = ({ userData }) => {
           <p className="text-green-600 text-3xl font-bold text-center">{userData.puntosReciclaje}</p>
         </div>
 
-        <div>
+        <div className="mb-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Historial de Solicitudes</h3>
           {userData.solicitudesAnteriores && userData.solicitudesAnteriores.length > 0 ? (
             <ul className="space-y-3">
@@ -48,6 +69,17 @@ const UsuarioProfile = ({ userData }) => {
             <p className="text-gray-600 text-center">Aún no tienes solicitudes de recolección.</p>
           )}
         </div>
+
+        {/* Botón de Cerrar sesión */}
+        <div className="text-center mt-6">
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full font-semibold shadow-md"
+          >
+            Cerrar sesión
+          </button>
+        </div>
+
       </div>
     </div>
   );

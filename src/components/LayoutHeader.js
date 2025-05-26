@@ -1,4 +1,4 @@
- import React, { useState } from 'react';
+import React, { useState } from 'react';
 
 const LayoutHeader = ({ currentPage, setCurrentPage }) => {
   // No renderizar el header en la página de inicio animada ni en registro
@@ -34,7 +34,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                 <li>
                   <button
                     onClick={() => handlePageChange('mapa')}
-                    className={block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'mapa' ? 'font-semibold text-green-600' : ''}}
+                    className={`block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'mapa' ? 'font-semibold text-green-600' : ''}`}
                   >
                     Mapa
                   </button>
@@ -42,7 +42,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                 <li>
                   <button
                     onClick={() => handlePageChange('solicitud')}
-                    className={block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'solicitud' ? 'font-semibold text-green-600' : ''}}
+                    className={`block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'solicitud' ? 'font-semibold text-green-600' : ''}`}
                   >
                     Solicitud
                   </button>
@@ -50,7 +50,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                 <li>
                   <button
                     onClick={() => handlePageChange('tips')}
-                    className={block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'tips' ? 'font-semibold text-green-600' : ''}}
+                    className={`block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'tips' ? 'font-semibold text-green-600' : ''}`}
                   >
                     Consejos y Avisos
                   </button>
@@ -58,7 +58,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                 <li>
                   <button
                     onClick={() => handlePageChange('usuario')}
-                    className={block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'usuario' ? 'font-semibold text-green-600' : ''}}
+                    className={`block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'usuario' ? 'font-semibold text-green-600' : ''}`}
                   >
                     Usuario
                   </button>
@@ -66,7 +66,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                 <li>
                   <button
                     onClick={() => handlePageChange('mascota')}
-                    className={block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'mascota' ? 'font-semibold text-green-600' : ''}}
+                    className={`block w-full text-left px-4 py-2 text-gray-600 hover:bg-green-100 transition-colors ${currentPage === 'mascota' ? 'font-semibold text-green-600' : ''}`}
                   >
                     Mascota
                   </button>

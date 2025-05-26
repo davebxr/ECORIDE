@@ -38,7 +38,7 @@ const UsuarioProfile = ({ userData }) => {
                     <p className="font-medium text-gray-700">{solicitud.tipo} ({solicitud.peso} kg)</p>
                     <p className="text-gray-600 text-sm">Fecha: {solicitud.fecha}</p>
                   </div>
-                  <span className={px-3 py-1 rounded-full text-xs font-semibold ${solicitud.estado === 'Completada' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}}>
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${solicitud.estado === 'Completada' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                     {solicitud.estado}
                   </span>
                 </li>

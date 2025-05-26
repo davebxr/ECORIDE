@@ -12,28 +12,24 @@ const UsuarioProfile = ({ userData, onLogout }) => {
     );
   }
 
-  const handleImageClick = () => {
+  const handleTitleClick = () => {
     navigate('/InicioAnimado');
   };
 
   const handleLogout = () => {
-    if (onLogout) onLogout(); // ejecuta la función si se pasó
+    if (onLogout) onLogout(); // Llama a la función que cierre sesión
   };
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
       <div className="bg-white p-6 rounded-lg shadow-lg">
-
-        <div className="flex flex-col items-center mb-6">
-          {/* Imagen de perfil circular */}
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/149/149071.png" // puedes cambiar esta URL
-            alt="Usuario"
-            className="w-24 h-24 rounded-full cursor-pointer border-4 border-green-400 hover:opacity-90 transition"
-            onClick={handleImageClick}
-          />
-          <h2 className="text-2xl font-bold text-gray-800 mt-4">Perfil de Usuario</h2>
-        </div>
+        {/* Título clickeable */}
+        <h2
+          className="text-2xl font-bold text-center text-gray-800 mb-6 cursor-pointer hover:text-green-600 transition"
+          onClick={handleTitleClick}
+        >
+          Perfil de Usuario
+        </h2>
 
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Información Personal</h3>
@@ -70,7 +66,7 @@ const UsuarioProfile = ({ userData, onLogout }) => {
           )}
         </div>
 
-        {/* Botón de Cerrar sesión */}
+        {/* Botón cerrar sesión */}
         <div className="text-center mt-6">
           <button
             onClick={handleLogout}
@@ -79,7 +75,6 @@ const UsuarioProfile = ({ userData, onLogout }) => {
             Cerrar sesión
           </button>
         </div>
-
       </div>
     </div>
   );

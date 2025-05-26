@@ -1,213 +1,208 @@
-import React, { useState, useEffect } from 'react';
-
-const shuffleCards = () => {
-  const baseEmojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🐝', '🍀', '🌾', '🦋'];
-  const pairedCards = [...baseEmojis, ...baseEmojis].map((emoji, index) => ({
-    id: index,
-    emoji,
-    matched: false
-  }));
-  return pairedCards.sort(() => Math.random() - 0.5);
-};
-
-const Juegos = ({ userData, setUserData }) => {
-  const [currentGame, setCurrentGame] = useState(null);
-  const [gameStatus, setGameStatus] = useState('playing');
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [matchedItems, setMatchedItems] = useState([]);
-  const [cartasMemorama, setCartasMemorama] = useState(shuffleCards());
-  const [disableBoard, setDisableBoard] = useState(false);
-
-  const materiales = [
-    { id: 1, name: 'Botella de plástico', type: 'plastico', image: '🧴' },
-    { id: 2, name: 'Periódico', type: 'papel', image: '📰' },
-    { id: 3, name: 'Lata de aluminio', type: 'metal', image: '🥫' },
-    { id: 4, name: 'Vaso de vidrio', type: 'vidrio', image: '🥛' },
-    { id: 5, name: 'Cáscara de banana', type: 'organico', image: '🍌' },
-    { id: 6, name: 'Celular viejo', type: 'electronico', image: '📱' }
-  ];
-
-  const handleClasificar = (id) => {
-    const material = materiales.find(m => m.id === id);
-    if (material.type === 'organico') {
-      setGameStatus('lose');
-    } else {
-      setGameStatus('win');
-      addPoints(150);
-    }
-  };
-
-  const handleSelectCard = (id) => {
-    if (disableBoard || selectedItems.includes(id)) return;
-    if (selectedItems.length === 0) {
-      setSelectedItems([id]);
-    } else if (selectedItems.length === 1) {
-      setSelectedItems([selectedItems[0], id]);
-      setDisableBoard(true);
-
-      const card1 = cartasMemorama.find(c => c.id === selectedItems[0]);
-      const card2 = cartasMemorama.find(c => c.id === id);
-
-      if (card1.emoji === card2.emoji) {
-        setTimeout(() => {
-          setMatchedItems(prev => [...prev, card1.id, card2.id]);
-          setSelectedItems([]);
-          setDisableBoard(false);
-          addPoints(120);
-        }, 500);
-      } else {
-        setTimeout(() => {
-          setSelectedItems([]);
-          setDisableBoard(false);
-        }, 1000);
-      }
-    }
-  };
-
-  const addPoints = (points) => {
-    const newPoints = (userData.puntosReciclaje || 0) + points;
-    const updatedUser = {
-      ...userData,
-      puntosReciclaje: newPoints,
-      mascotaDesbloqueada: newPoints >= 1000
-    };
-    localStorage.setItem('ecorideUser', JSON.stringify(updatedUser));
-    setUserData(updatedUser);
-  };
-
-  const resetGame = () => {
-    setGameStatus('playing');
-    setSelectedItems([]);
-    setMatchedItems([]);
-    setCartasMemorama(shuffleCards());
-  };
-
-  useEffect(() => {
-    if (matchedItems.length === cartasMemorama.length && matchedItems.length > 0) {
-      setGameStatus('win');
-    }
-  }, [matchedItems]);
-
-  return (
-    <div className="container mx-auto px-4 py-8 mt-16">
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Juegos Ecológicos</h2>
-
-        {!currentGame ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Clasificación Rápida</h3>
-              <p className="mb-4">Clasifica los residuos correctamente antes de que se acabe el tiempo.</p>
-              <button 
-                onClick={() => setCurrentGame('clasificacion')}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-              >
-                Jugar (150 puntos)
-              </button>
-            </div>
-
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
-              <p className="mb-4">Encuentra las parejas de elementos reciclables.</p>
-              <button 
-                onClick={() => setCurrentGame('memorama')}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-              >
-                Jugar (120 puntos)
-              </button>
+<template>
+  <div class="game-container">
+    <div v-if="currentGame === 'memorama'">
+      <h1 class="game-title">Memorama Ecológico</h1>
+      <div class="grid">
+        <div
+          v-for="(card, index) in shuffledCards"
+          :key="index"
+          class="card"
+          :class="{ flipped: card.flipped || card.matched }"
+          @click="flipCard(index)"
+        >
+          <div class="card-inner">
+            <div class="card-front"></div>
+            <div class="card-back">
+              <img :src="card.img" alt="Eco card" />
             </div>
           </div>
-        ) : currentGame === 'clasificacion' ? (
-          <div>
-            <button 
-              onClick={() => setCurrentGame(null)} 
-              className="mb-4 text-gray-600 hover:text-green-600"
-            >
-              ← Volver a los juegos
-            </button>
-
-            {gameStatus === 'playing' ? (
-              <div>
-                <h3 className="text-xl font-semibold mb-4">Clasificación Rápida</h3>
-                <p className="mb-4">Selecciona todos los materiales reciclables:</p>
-                <div className="grid grid-cols-2 gap-4">
-                  {materiales.map(material => (
-                    <button
-                      key={material.id}
-                      onClick={() => handleClasificar(material.id)}
-                      className="bg-white border-2 border-gray-200 p-4 rounded-lg flex items-center justify-center text-4xl hover:shadow-md"
-                    >
-                      {material.image} {material.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className={`p-6 rounded-lg ${gameStatus === 'win' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                {gameStatus === 'win' ? (
-                  <>
-                    <p className="text-2xl mb-4">¡Correcto! +150 puntos</p>
-                    <p>Has clasificado bien los materiales reciclables.</p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-2xl mb-4">¡Oops!</p>
-                    <p>Algunos materiales no eran reciclables. Intenta de nuevo.</p>
-                  </>
-                )}
-                <button
-                  onClick={resetGame}
-                  className="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
-                >
-                  Jugar otra vez
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div>
-            <button 
-              onClick={() => setCurrentGame(null)} 
-              className="mb-4 text-gray-600 hover:text-green-600"
-            >
-              ← Volver a los juegos
-            </button>
-
-            <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
-            <div className="grid grid-cols-5 gap-2 justify-center">
-              {cartasMemorama.map(carta => {
-                const isFlipped = selectedItems.includes(carta.id) || matchedItems.includes(carta.id);
-                return (
-                  <div
-                    key={carta.id}
-                    className={`relative w-20 h-20 perspective`}
-                    onClick={() => handleSelectCard(carta.id)}
-                  >
-                    <div className={`transition-transform duration-500 transform ${isFlipped ? 'rotate-y-180' : ''} w-full h-full`}> 
-                      <div className={`absolute backface-hidden bg-blue-200 rounded-lg w-full h-full flex items-center justify-center text-2xl`}>❓</div>
-                      <div className={`absolute rotate-y-180 backface-hidden bg-green-200 rounded-lg w-full h-full flex items-center justify-center text-2xl`}>{carta.emoji}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {gameStatus === 'win' && (
-              <div className="mt-4 bg-green-100 text-green-800 p-4 rounded-lg">
-                <p className="text-xl">¡Encontraste todas las parejas! +120 puntos</p>
-                <button
-                  onClick={resetGame}
-                  className="mt-2 bg-green-600 text-white px-4 py-1 rounded-lg"
-                >
-                  Jugar otra vez
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+        </div>
+      </div>
+      <div v-if="matchedPairs === cards.length / 2" class="win-screen">
+        <div class="win-message">
+          <h2>¡Ganaste!</h2>
+          <p>+120 puntos</p>
+        </div>
       </div>
     </div>
-  );
-};
+    <div v-else>
+      <JuegoDos />
+    </div>
+  </div>
+</template>
 
-export default Juegos;
+<script>
+import JuegoDos from './JuegoDos.vue';
+
+export default {
+  components: {
+    JuegoDos,
+  },
+  data() {
+    return {
+      currentGame: 'memorama',
+      cards: [
+        { id: 1, img: 'img1.jpg' },
+        { id: 2, img: 'img2.jpg' },
+        { id: 3, img: 'img3.jpg' },
+        { id: 4, img: 'img4.jpg' },
+        { id: 5, img: 'img5.jpg' },
+        { id: 6, img: 'img6.jpg' },
+        { id: 7, img: 'img7.jpg' },
+        { id: 8, img: 'img8.jpg' },
+      ],
+      flippedCards: [],
+      matchedPairs: 0,
+    };
+  },
+  computed: {
+    shuffledCards() {
+      const duplicated = [...this.cards, ...this.cards];
+      return duplicated
+        .map((card) => ({ ...card, flipped: false, matched: false }))
+        .sort(() => 0.5 - Math.random());
+    },
+  },
+  methods: {
+    flipCard(index) {
+      const card = this.shuffledCards[index];
+      if (card.flipped || card.matched || this.flippedCards.length === 2) return;
+      card.flipped = true;
+      this.flippedCards.push(card);
+
+      if (this.flippedCards.length === 2) {
+        setTimeout(() => {
+          const [first, second] = this.flippedCards;
+          if (first.id === second.id) {
+            first.matched = true;
+            second.matched = true;
+            this.matchedPairs++;
+          } else {
+            first.flipped = false;
+            second.flipped = false;
+          }
+          this.flippedCards = [];
+        }, 1000);
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f0f8ff;
+  padding: 1rem;
+}
+
+.game-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #2e7d32;
+  text-shadow: 1px 1px 2px #ccc;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+  width: 100%;
+}
+
+.card {
+  perspective: 1000px;
+  width: 100px;
+  height: 140px;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner,
+.card.matched .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-front {
+  background-color: #a5d6a7;
+}
+
+.card-back {
+  background-color: #fff;
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-back img {
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.win-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 128, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+.win-message {
+  text-align: center;
+  color: #fff;
+  font-size: 2rem;
+  animation: scaleUp 0.8s ease-in-out;
+}
+
+.win-message p {
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+</style>

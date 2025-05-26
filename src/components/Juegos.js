@@ -21,6 +21,8 @@ const Juegos = ({ userData, setUserData }) => {
       setMatched([]);
       setGameStatus('playing');
       setIsShuffling(true);
+
+      // Quitar la animación después de 1 segundo (duración de la animación)
       setTimeout(() => setIsShuffling(false), 1000);
     }
   }, [currentGame]);
@@ -110,12 +112,14 @@ const Juegos = ({ userData, setUserData }) => {
                   <div
                     key={card.id}
                     onClick={() => handleCardClick(index)}
-                    className="relative w-full aspect-square cursor-pointer"
+                    className={`relative w-full aspect-square cursor-pointer ${
+                      isShuffling ? 'shuffling-card' : ''
+                    }`}
                   >
                     <div
                       className={`card ${isFlipped ? 'flipped' : ''} ${
                         isMatched ? 'matched' : ''
-                      } ${isShuffling ? 'shuffle' : ''}`}
+                      }`}
                     >
                       <div className="card-face card-front">❓</div>
                       <div className="card-face card-back">{card.emoji}</div>
@@ -187,25 +191,30 @@ const Juegos = ({ userData, setUserData }) => {
           animation: pop 0.3s ease-out;
         }
 
-        .shuffle {
-          animation: shuffle 0.8s ease-in-out;
+        /* Animación shuffle - movimiento aleatorio al inicio */
+        .shuffling-card {
+          animation: shuffle-move 1s ease-in-out forwards;
+          pointer-events: none; /* no clickeable durante shuffle */
         }
 
-        @keyframes shuffle {
+        @keyframes shuffle-move {
           0% {
-            transform: rotateY(0deg);
+            transform: translate(0, 0);
           }
-          25% {
-            transform: rotateY(90deg);
+          20% {
+            transform: translate(-10px, -10px);
           }
-          50% {
-            transform: rotateY(180deg);
+          40% {
+            transform: translate(10px, -10px);
           }
-          75% {
-            transform: rotateY(270deg);
+          60% {
+            transform: translate(-10px, 10px);
+          }
+          80% {
+            transform: translate(10px, 10px);
           }
           100% {
-            transform: rotateY(360deg);
+            transform: translate(0, 0);
           }
         }
 

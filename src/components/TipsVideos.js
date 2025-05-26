@@ -12,11 +12,11 @@ const TipsVideos = () => {
   ];
 
   const videos = [
-    { id: 1, title: 'BENEFICIOS DEL RECICLAJE ♻ ¿Qué es el reciclaje?', url: 'https://www.youtube.com/watch?v=5q2HSdgO7CA' },
-    { id: 2, title: 'Qué es el RECICLAJE y por qué es IMPORTANTE? ', url: 'https://www.youtube.com/watch?v=uaI3PLmAJyM' }, 
-    { id: 3, title: 'Plaza Sésamo: Elmo aprende sobre el reciclaje', url: 'https://www.youtube.com/watch?v=haR08SGmwfs' }, 
-    { id: 4, title: 'La IMPORTANCIA de RECICLAR para el MEDIO AMBIENTE ', url: 'https://www.youtube.com/watch?v=cvakvfXj0KE' }, 
-    { id: 5, title: '¿Cómo reciclar? Aprende con Nacho las 3 R del reciclaje', url: 'https://www.youtube.com/watch?v=WVrxkF6TcQU' }, 
+    { id: 1, title: 'BENEFICIOS DEL RECICLAJE ♻ ¿Qué es el reciclaje?', url: '<iframe width="560" height="315" src="https://www.youtube.com/embed/5q2HSdgO7CA?si=UayP5pfjpgOpMbPM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' },
+    { id: 2, title: 'Qué es el RECICLAJE y por qué es IMPORTANTE? ', url: '<iframe width="560" height="315" src="https://www.youtube.com/embed/uaI3PLmAJyM?si=f2oCNbeMo1Gzcfph" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' }, 
+    { id: 3, title: 'Plaza Sésamo: Elmo aprende sobre el reciclaje', url: '<iframe width="560" height="315" src="https://www.youtube.com/embed/haR08SGmwfs?si=XtaOYUXT0mrrING9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' }, 
+    { id: 4, title: 'La IMPORTANCIA de RECICLAR para el MEDIO AMBIENTE ', url: '<iframe width="560" height="315" src="https://www.youtube.com/embed/cvakvfXj0KE?si=MwC_9PXeJ_hPwTyH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' }, 
+    { id: 5, title: '¿Cómo reciclar? Aprende con Nacho las 3 R del reciclaje', url: '<iframe width="560" height="315" src="https://www.youtube.com/embed/WVrxkF6TcQU?si=ty_OGkjA95OYExHD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' }, 
   ];
 
   return (

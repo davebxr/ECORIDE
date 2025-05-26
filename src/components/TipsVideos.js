@@ -42,40 +42,41 @@ const TipsVideos = () => {
         <div>
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Videos Educativos</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Primer y segundo video */}
-            {videos.slice(0, 2).map(video => (
+            {/* Videos 1 a 4 */}
+            {videos.slice(0, 4).map(video => (
               <div
                 key={video.id}
                 className="bg-gray-100 p-4 rounded-lg shadow-sm"
               >
                 <h4 className="font-semibold text-gray-700 mb-2">{video.title}</h4>
-                <div className="aspect-w-16 aspect-h-9">
-                  <iframe
-                    src={video.url}
-                    title={video.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="w-full h-full rounded-lg"
-                  ></iframe>
-                </div>
+                <iframe
+                  width="560"
+                  height="315"
+                  src={video.url}
+                  title={video.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="rounded-lg w-full"
+                  style={{ maxWidth: '560px', height: '315px' }}
+                ></iframe>
               </div>
             ))}
 
-            {/* Video centrado debajo */}
+            {/* Quinto video centrado y en mitad del ancho */}
             <div className="md:col-span-2 flex justify-center">
-              <div className="bg-gray-100 p-4 rounded-lg shadow-sm w-full max-w-3xl">
-                <h4 className="font-semibold text-gray-700 mb-2">{videos[2].title}</h4>
-                <div className="aspect-w-16 aspect-h-9">
-                  <iframe
-                    src={videos[2].url}
-                    title={videos[2].title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="w-full h-full rounded-lg"
-                  ></iframe>
-                </div>
+              <div className="bg-gray-100 p-4 rounded-lg shadow-sm" style={{ width: '280px' }}>
+                <h4 className="font-semibold text-gray-700 mb-2">{videos[4].title}</h4>
+                <iframe
+                  width="280"
+                  height="158" // Mantiene 16:9 pero mitad de tamaño
+                  src={videos[4].url}
+                  title={videos[4].title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="rounded-lg w-full"
+                ></iframe>
               </div>
             </div>
           </div>

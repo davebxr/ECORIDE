@@ -7,7 +7,7 @@ const Juegos = ({ userData, setUserData }) => {
   const [matchedCards, setMatchedCards] = useState([]);
   const [cards, setCards] = useState([]);
 
-  const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊'];
+  const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🌻', '🐝', '🍀', '🌾'];
 
   useEffect(() => {
     if (currentGame === 'memorama') {
@@ -36,7 +36,6 @@ const Juegos = ({ userData, setUserData }) => {
     if (newSelected.length === 2) {
       const [firstIndex, secondIndex] = newSelected;
       if (cards[firstIndex].emoji === cards[secondIndex].emoji) {
-        // Pareja encontrada
         setTimeout(() => {
           const newMatched = [...matchedCards, firstIndex, secondIndex];
           setMatchedCards(newMatched);
@@ -45,9 +44,8 @@ const Juegos = ({ userData, setUserData }) => {
           if (newMatched.length === cards.length) {
             setGameStatus('win');
           }
-        }, 500);
+        }, 800);
       } else {
-        // No son pareja
         setTimeout(() => {
           setSelectedItems([]);
         }, 1000);
@@ -68,10 +66,8 @@ const Juegos = ({ userData, setUserData }) => {
 
   const resetGame = () => {
     setGameStatus('playing');
-    setCurrentGame(null); // reinicia a selección de juegos
+    setCurrentGame(null);
   };
-
-  // ... deja intacta la parte de clasificación y estructura general
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
@@ -80,8 +76,6 @@ const Juegos = ({ userData, setUserData }) => {
 
         {!currentGame ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Clasificación */}
-            {/* ...esto queda igual */}
             <div className="bg-gray-100 p-4 rounded-lg">
               <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
               <p className="mb-4">Encuentra las parejas de elementos reciclables.</p>
@@ -92,6 +86,7 @@ const Juegos = ({ userData, setUserData }) => {
                 Jugar (120 puntos)
               </button>
             </div>
+            {/* Otro juego puede ir aquí */}
           </div>
         ) : currentGame === 'memorama' ? (
           <div>
@@ -103,23 +98,22 @@ const Juegos = ({ userData, setUserData }) => {
             </button>
 
             <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
-            <div className="grid grid-cols-4 gap-4">
-              {cards.map((card, index) => (
-                <button
-                  key={card.id}
-                  onClick={() => handleSelectCard(index)}
-                  disabled={selectedItems.includes(index) || matchedCards.includes(index)}
-                  className={`aspect-square flex items-center justify-center text-4xl rounded-lg ${
-                    selectedItems.includes(index) || matchedCards.includes(index)
-                      ? 'bg-green-200'
-                      : 'bg-blue-200'
-                  }`}
-                >
-                  {selectedItems.includes(index) || matchedCards.includes(index)
-                    ? card.emoji
-                    : '❓'}
-                </button>
-              ))}
+            <div className="grid grid-cols-6 gap-4">
+              {cards.map((card, index) => {
+                const isFlipped = selectedItems.includes(index) || matchedCards.includes(index);
+                return (
+                  <button
+                    key={card.id}
+                    onClick={() => handleSelectCard(index)}
+                    disabled={isFlipped}
+                    className={`aspect-square flex items-center justify-center text-4xl rounded-lg transition-all duration-300 ${
+                      isFlipped ? 'bg-green-200' : 'bg-blue-200'
+                    }`}
+                  >
+                    {isFlipped ? card.emoji : '❓'}
+                  </button>
+                );
+              })}
             </div>
 
             {gameStatus === 'win' && (
@@ -135,7 +129,6 @@ const Juegos = ({ userData, setUserData }) => {
             )}
           </div>
         ) : (
-          // Aquí va el otro juego de clasificación (lo dejas igual)
           <></>
         )}
       </div>

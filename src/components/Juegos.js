@@ -1,77 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const Juegos = ({ userData, setUserData }) => {
   const [currentGame, setCurrentGame] = useState(null);
-  const [gameStatus, setGameStatus] = useState('playing');
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [matchedCards, setMatchedCards] = useState([]);
   const [cards, setCards] = useState([]);
+  const [selected, setSelected] = useState([]);
+  const [matched, setMatched] = useState([]);
+  const [gameStatus, setGameStatus] = useState('playing');
 
-  const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🦋', '🌾', '🌼', '🌻'];
+  const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🐢', '🌾', '🦋', '🌻'];
 
   useEffect(() => {
     if (currentGame === 'memorama') {
       const shuffled = [...emojis, ...emojis]
-        .map((emoji, index) => ({ id: index, emoji, matched: false }))
+        .map((emoji, i) => ({ id: i, emoji, matched: false }))
         .sort(() => Math.random() - 0.5);
       setCards(shuffled);
-      setSelectedItems([]);
-      setMatchedCards([]);
+      setSelected([]);
+      setMatched([]);
       setGameStatus('playing');
     }
   }, [currentGame]);
 
-  const handleSelectCard = (cardIndex) => {
+  const handleCardClick = (index) => {
     if (
-      selectedItems.length === 2 ||
-      selectedItems.includes(cardIndex) ||
-      matchedCards.includes(cardIndex)
-    ) {
+      selected.length === 2 ||
+      selected.includes(index) ||
+      matched.includes(index)
+    )
       return;
-    }
 
-    const newSelected = [...selectedItems, cardIndex];
-    setSelectedItems(newSelected);
+    const newSelected = [...selected, index];
+    setSelected(newSelected);
 
     if (newSelected.length === 2) {
-      const [firstIndex, secondIndex] = newSelected;
-      if (cards[firstIndex].emoji === cards[secondIndex].emoji) {
+      const [i1, i2] = newSelected;
+      if (cards[i1].emoji === cards[i2].emoji) {
         setTimeout(() => {
-          const newMatched = [...matchedCards, firstIndex, secondIndex];
-          setMatchedCards(newMatched);
-          setSelectedItems([]);
+          const newMatched = [...matched, i1, i2];
+          setMatched(newMatched);
+          setSelected([]);
           addPoints(120);
           if (newMatched.length === cards.length) {
             setGameStatus('win');
           }
-        }, 500);
+        }, 600);
       } else {
-        setTimeout(() => {
-          setSelectedItems([]);
-        }, 1000);
+        setTimeout(() => setSelected([]), 1000);
       }
     }
   };
 
   const addPoints = (points) => {
-    const newPoints = (userData.puntosReciclaje || 0) + points;
-    const updatedUser = {
+    const total = (userData.puntosReciclaje || 0) + points;
+    const updated = {
       ...userData,
-      puntosReciclaje: newPoints,
-      mascotaDesbloqueada: newPoints >= 1000,
+      puntosReciclaje: total,
+      mascotaDesbloqueada: total >= 1000,
     };
-    localStorage.setItem('ecorideUser', JSON.stringify(updatedUser));
-    setUserData(updatedUser);
+    localStorage.setItem('ecorideUser', JSON.stringify(updated));
+    setUserData(updated);
   };
 
   const resetGame = () => {
-    setGameStatus('playing');
     setCurrentGame(null);
+    setGameStatus('playing');
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-16">
+    <div className="container mx-auto px-4 py-10 mt-16">
       <div className="bg-white p-6 rounded-lg shadow-lg text-center">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Juegos Ecológicos</h2>
 
@@ -79,87 +75,107 @@ const Juegos = ({ userData, setUserData }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-gray-100 p-4 rounded-lg">
               <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
-              <p className="mb-4">Encuentra las parejas de elementos reciclables.</p>
+              <p className="mb-4">Encuentra las parejas de elementos ecológicos.</p>
               <button
                 onClick={() => setCurrentGame('memorama')}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
               >
                 Jugar (120 puntos)
               </button>
             </div>
           </div>
-        ) : currentGame === 'memorama' ? (
-          <div className="relative">
+        ) : (
+          <div>
             <button
-              onClick={() => setCurrentGame(null)}
+              onClick={resetGame}
               className="mb-4 text-gray-600 hover:text-green-600"
             >
               ← Volver a los juegos
             </button>
 
-            <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
-            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
+            <div className="grid grid-cols-5 gap-4 perspective">
               {cards.map((card, index) => {
-                const isFlipped = selectedItems.includes(index) || matchedCards.includes(index);
+                const flipped = selected.includes(index) || matched.includes(index);
                 return (
-                  <motion.button
+                  <div
                     key={card.id}
-                    onClick={() => handleSelectCard(index)}
-                    disabled={isFlipped}
-                    className={`relative w-20 h-20 sm:w-24 sm:h-24 text-3xl sm:text-4xl rounded-lg transform transition-transform duration-500 ${
-                      isFlipped ? 'bg-green-200' : 'bg-blue-200'
-                    }`}
-                    animate={{ rotateY: isFlipped ? 180 : 0 }}
-                    transition={{ duration: 0.5 }}
-                    style={{ perspective: 1000 }}
+                    onClick={() => handleCardClick(index)}
+                    className="relative w-full aspect-square cursor-pointer"
                   >
-                    <span className="absolute inset-0 flex items-center justify-center backface-hidden">
-                      {isFlipped ? card.emoji : '❓'}
-                    </span>
-                  </motion.button>
+                    <div className={`card ${flipped ? 'flipped' : ''}`}>
+                      <div className="card-face card-front">❓</div>
+                      <div className="card-face card-back">{card.emoji}</div>
+                    </div>
+                  </div>
                 );
               })}
             </div>
 
-            <AnimatePresence>
-              {gameStatus === 'win' && (
-                <motion.div
-                  className="fixed inset-0 bg-green-100 bg-opacity-90 flex flex-col items-center justify-center z-50"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+            {gameStatus === 'win' && (
+              <div className="fixed inset-0 bg-green-100 flex flex-col items-center justify-center z-50 animate-fadeIn">
+                <h1 className="text-4xl md:text-6xl font-bold text-green-800 mb-4 animate-bounce">
+                  🎉 ¡Felicidades, lo completaste! 🎉
+                </h1>
+                <p className="text-2xl text-green-700 font-semibold">+120 puntos</p>
+                <button
+                  onClick={resetGame}
+                  className="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
                 >
-                  <motion.h2
-                    className="text-4xl sm:text-5xl font-bold text-green-800 mb-4"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    🎉 ¡Felicidades, lo completaste!
-                  </motion.h2>
-                  <motion.p
-                    className="text-2xl text-green-700 mb-8"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6, duration: 0.8 }}
-                  >
-                    +120 puntos
-                  </motion.p>
-                  <button
-                    onClick={resetGame}
-                    className="bg-green-600 text-white px-6 py-2 rounded-lg text-lg hover:bg-green-700"
-                  >
-                    Volver al menú
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  Volver al menú
+                </button>
+              </div>
+            )}
           </div>
-        ) : (
-          // Aquí va el otro juego de clasificación (se deja intacto)
-          <></>
         )}
       </div>
+
+      {/* Estilos personalizados */}
+      <style jsx>{`
+        .perspective {
+          perspective: 1000px;
+        }
+        .card {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          transform-style: preserve-3d;
+          transition: transform 0.6s;
+        }
+        .flipped {
+          transform: rotateY(180deg);
+        }
+        .card-face {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          border-radius: 0.5rem;
+        }
+        .card-front {
+          background-color: #bee3f8;
+        }
+        .card-back {
+          background-color: #c6f6d5;
+          transform: rotateY(180deg);
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 };

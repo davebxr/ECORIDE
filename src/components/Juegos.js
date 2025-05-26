@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Juegos = ({ userData, setUserData }) => {
   const [currentGame, setCurrentGame] = useState(null);
@@ -7,7 +8,7 @@ const Juegos = ({ userData, setUserData }) => {
   const [matchedCards, setMatchedCards] = useState([]);
   const [cards, setCards] = useState([]);
 
-  const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊'];
+  const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🦋', '🌾', '🌼', '🌻'];
 
   useEffect(() => {
     if (currentGame === 'memorama') {
@@ -36,7 +37,6 @@ const Juegos = ({ userData, setUserData }) => {
     if (newSelected.length === 2) {
       const [firstIndex, secondIndex] = newSelected;
       if (cards[firstIndex].emoji === cards[secondIndex].emoji) {
-        // Pareja encontrada
         setTimeout(() => {
           const newMatched = [...matchedCards, firstIndex, secondIndex];
           setMatchedCards(newMatched);
@@ -47,7 +47,6 @@ const Juegos = ({ userData, setUserData }) => {
           }
         }, 500);
       } else {
-        // No son pareja
         setTimeout(() => {
           setSelectedItems([]);
         }, 1000);
@@ -68,10 +67,8 @@ const Juegos = ({ userData, setUserData }) => {
 
   const resetGame = () => {
     setGameStatus('playing');
-    setCurrentGame(null); // reinicia a selección de juegos
+    setCurrentGame(null);
   };
-
-  // ... deja intacta la parte de clasificación y estructura general
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
@@ -80,8 +77,6 @@ const Juegos = ({ userData, setUserData }) => {
 
         {!currentGame ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Clasificación */}
-            {/* ...esto queda igual */}
             <div className="bg-gray-100 p-4 rounded-lg">
               <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
               <p className="mb-4">Encuentra las parejas de elementos reciclables.</p>
@@ -94,7 +89,7 @@ const Juegos = ({ userData, setUserData }) => {
             </div>
           </div>
         ) : currentGame === 'memorama' ? (
-          <div>
+          <div className="relative">
             <button
               onClick={() => setCurrentGame(null)}
               className="mb-4 text-gray-600 hover:text-green-600"
@@ -103,39 +98,65 @@ const Juegos = ({ userData, setUserData }) => {
             </button>
 
             <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
-            <div className="grid grid-cols-4 gap-4">
-              {cards.map((card, index) => (
-                <button
-                  key={card.id}
-                  onClick={() => handleSelectCard(index)}
-                  disabled={selectedItems.includes(index) || matchedCards.includes(index)}
-                  className={`aspect-square flex items-center justify-center text-4xl rounded-lg ${
-                    selectedItems.includes(index) || matchedCards.includes(index)
-                      ? 'bg-green-200'
-                      : 'bg-blue-200'
-                  }`}
-                >
-                  {selectedItems.includes(index) || matchedCards.includes(index)
-                    ? card.emoji
-                    : '❓'}
-                </button>
-              ))}
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
+              {cards.map((card, index) => {
+                const isFlipped = selectedItems.includes(index) || matchedCards.includes(index);
+                return (
+                  <motion.button
+                    key={card.id}
+                    onClick={() => handleSelectCard(index)}
+                    disabled={isFlipped}
+                    className={`relative w-20 h-20 sm:w-24 sm:h-24 text-3xl sm:text-4xl rounded-lg transform transition-transform duration-500 ${
+                      isFlipped ? 'bg-green-200' : 'bg-blue-200'
+                    }`}
+                    animate={{ rotateY: isFlipped ? 180 : 0 }}
+                    transition={{ duration: 0.5 }}
+                    style={{ perspective: 1000 }}
+                  >
+                    <span className="absolute inset-0 flex items-center justify-center backface-hidden">
+                      {isFlipped ? card.emoji : '❓'}
+                    </span>
+                  </motion.button>
+                );
+              })}
             </div>
 
-            {gameStatus === 'win' && (
-              <div className="mt-4 bg-green-100 text-green-800 p-4 rounded-lg">
-                <p className="text-xl">¡Completaste el memorama! +120 puntos</p>
-                <button
-                  onClick={resetGame}
-                  className="mt-2 bg-green-600 text-white px-4 py-1 rounded-lg"
+            <AnimatePresence>
+              {gameStatus === 'win' && (
+                <motion.div
+                  className="fixed inset-0 bg-green-100 bg-opacity-90 flex flex-col items-center justify-center z-50"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                 >
-                  Volver al menú
-                </button>
-              </div>
-            )}
+                  <motion.h2
+                    className="text-4xl sm:text-5xl font-bold text-green-800 mb-4"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    🎉 ¡Felicidades, lo completaste!
+                  </motion.h2>
+                  <motion.p
+                    className="text-2xl text-green-700 mb-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
+                  >
+                    +120 puntos
+                  </motion.p>
+                  <button
+                    onClick={resetGame}
+                    className="bg-green-600 text-white px-6 py-2 rounded-lg text-lg hover:bg-green-700"
+                  >
+                    Volver al menú
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ) : (
-          // Aquí va el otro juego de clasificación (lo dejas igual)
+          // Aquí va el otro juego de clasificación (se deja intacto)
           <></>
         )}
       </div>

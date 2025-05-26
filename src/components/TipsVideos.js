@@ -42,31 +42,42 @@ const TipsVideos = () => {
         <div>
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Videos Educativos</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {videos.map((video, index) => {
-              const isLast = index === videos.length - 1;
-              return (
-                <div
-                  key={video.id}
-                  className={`bg-gray-100 p-4 rounded-lg shadow-sm ${
-                    isLast ? 'md:col-span-1 md:mx-auto' : ''
-                  }`}
-                  style={isLast ? { maxWidth: '600px' } : {}}
-                >
-                  <h4 className="font-semibold text-gray-700 mb-2">{video.title}</h4>
-                  <div className="w-full">
-                    <iframe
-                      src={video.url}
-                      title={video.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      className="w-full rounded-lg"
-                      style={{ height: '600px' }}
-                    ></iframe>
-                  </div>
+            {/* Primer y segundo video */}
+            {videos.slice(0, 2).map(video => (
+              <div
+                key={video.id}
+                className="bg-gray-100 p-4 rounded-lg shadow-sm"
+              >
+                <h4 className="font-semibold text-gray-700 mb-2">{video.title}</h4>
+                <div className="aspect-w-16 aspect-h-9">
+                  <iframe
+                    src={video.url}
+                    title={video.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full rounded-lg"
+                  ></iframe>
                 </div>
-              );
-            })}
+              </div>
+            ))}
+
+            {/* Video centrado debajo */}
+            <div className="md:col-span-2 flex justify-center">
+              <div className="bg-gray-100 p-4 rounded-lg shadow-sm w-full max-w-3xl">
+                <h4 className="font-semibold text-gray-700 mb-2">{videos[2].title}</h4>
+                <div className="aspect-w-16 aspect-h-9">
+                  <iframe
+                    src={videos[2].url}
+                    title={videos[2].title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full rounded-lg"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

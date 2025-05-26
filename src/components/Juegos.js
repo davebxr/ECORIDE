@@ -6,6 +6,8 @@ const Juegos = ({ userData, setUserData }) => {
   const [selected, setSelected] = useState([]);
   const [matched, setMatched] = useState([]);
   const [gameStatus, setGameStatus] = useState('playing');
+  const [showStars, setShowStars] = useState(false);
+  const [isShuffling, setIsShuffling] = useState(false);
 
   const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🐢', '🌾', '🦋', '🌻'];
 
@@ -18,6 +20,8 @@ const Juegos = ({ userData, setUserData }) => {
       setSelected([]);
       setMatched([]);
       setGameStatus('playing');
+      setIsShuffling(true);
+      setTimeout(() => setIsShuffling(false), 1000);
     }
   }, [currentGame]);
 
@@ -25,7 +29,8 @@ const Juegos = ({ userData, setUserData }) => {
     if (
       selected.length === 2 ||
       selected.includes(index) ||
-      matched.includes(index)
+      matched.includes(index) ||
+      isShuffling
     )
       return;
 
@@ -40,6 +45,9 @@ const Juegos = ({ userData, setUserData }) => {
           setMatched(newMatched);
           setSelected([]);
           addPoints(120);
+          setShowStars(true);
+          setTimeout(() => setShowStars(false), 1000);
+
           if (newMatched.length === cards.length) {
             setGameStatus('win');
           }
@@ -93,22 +101,34 @@ const Juegos = ({ userData, setUserData }) => {
               ← Volver a los juegos
             </button>
 
-            <div className="grid grid-cols-5 gap-4 perspective">
+            <div className="grid grid-cols-5 gap-4 perspective relative">
               {cards.map((card, index) => {
-                const flipped = selected.includes(index) || matched.includes(index);
+                const isFlipped = selected.includes(index) || matched.includes(index);
+                const isMatched = matched.includes(index);
+
                 return (
                   <div
                     key={card.id}
                     onClick={() => handleCardClick(index)}
                     className="relative w-full aspect-square cursor-pointer"
                   >
-                    <div className={`card ${flipped ? 'flipped' : ''}`}>
+                    <div
+                      className={`card ${isFlipped ? 'flipped' : ''} ${
+                        isMatched ? 'matched' : ''
+                      } ${isShuffling ? 'shuffle' : ''}`}
+                    >
                       <div className="card-face card-front">❓</div>
                       <div className="card-face card-back">{card.emoji}</div>
                     </div>
                   </div>
                 );
               })}
+
+              {showStars && (
+                <div className="stars absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+                  <div className="text-yellow-400 text-5xl animate-stars">🌟🌟🌟</div>
+                </div>
+              )}
             </div>
 
             {gameStatus === 'win' && (
@@ -162,6 +182,64 @@ const Juegos = ({ userData, setUserData }) => {
           background-color: #c6f6d5;
           transform: rotateY(180deg);
         }
+        .matched .card-back {
+          background-color: #fcd34d; /* amarillo/dorado */
+          animation: pop 0.3s ease-out;
+        }
+
+        .shuffle {
+          animation: shuffle 0.8s ease-in-out;
+        }
+
+        @keyframes shuffle {
+          0% {
+            transform: rotateY(0deg);
+          }
+          25% {
+            transform: rotateY(90deg);
+          }
+          50% {
+            transform: rotateY(180deg);
+          }
+          75% {
+            transform: rotateY(270deg);
+          }
+          100% {
+            transform: rotateY(360deg);
+          }
+        }
+
+        .animate-stars {
+          animation: stars 1s ease-out forwards;
+        }
+
+        @keyframes stars {
+          0% {
+            transform: scale(0.5);
+            opacity: 0;
+          }
+          50% {
+            transform: scale(1.2);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 0;
+          }
+        }
+
+        @keyframes pop {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.15);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+
         .animate-fadeIn {
           animation: fadeIn 0.5s ease-out;
         }

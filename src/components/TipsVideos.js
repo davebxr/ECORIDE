@@ -8,14 +8,14 @@ const TipsVideos = () => {
     { id: 4, title: 'Reutiliza', content: 'Puedes crear con tu reciclaje.' },
     { id: 5, title: 'Conoce los materiales reciclables', content: 'Infórmate sobre qué materiales son reciclables en tu área.' },
     { id: 6, title: 'Limpia y seca los envases', content: 'Antes de reciclar, asegúrate de que los envases estén limpios y secos. Los residuos de alimentos pueden contaminar el reciclaje.' },
-    { id: 7, title: 'Separa tus residuos:', content: 'Separa tu reciclaje por canecas que indiquen su funcion.' },
+    { id: 7, title: 'Separa tus residuos:', content: 'Separa tu reciclaje por canecas que indiquen su función.' },
   ];
 
   const videos = [
     { id: 1, title: 'BENEFICIOS DEL RECICLAJE ♻ ¿Qué es el reciclaje?', url: 'https://www.youtube.com/embed/5q2HSdgO7CA?si=UayP5pfjpgOpMbPM' },
-    { id: 2, title: 'Qué es el RECICLAJE y por qué es IMPORTANTE?', url: 'https://www.youtube.com/embed/uaI3PLmAJyM?si=f2oCNbeMo1Gzcfph' },
+    { id: 2, title: 'Qué es el RECICLAJE y por qué es IMPORTANTE? ', url: 'https://www.youtube.com/embed/uaI3PLmAJyM?si=f2oCNbeMo1Gzcfph' },
     { id: 3, title: 'Plaza Sésamo: Elmo aprende sobre el reciclaje', url: 'https://www.youtube.com/embed/haR08SGmwfs?si=XtaOYUXT0mrrING9' },
-    { id: 4, title: 'La IMPORTANCIA de RECICLAR para el MEDIO AMBIENTE', url: 'https://www.youtube.com/embed/cvakvfXj0KE?si=MwC_9PXeJ_hPwTyH' },
+    { id: 4, title: 'La IMPORTANCIA de RECICLAR para el MEDIO AMBIENTE ', url: 'https://www.youtube.com/embed/cvakvfXj0KE?si=MwC_9PXeJ_hPwTyH' },
     { id: 5, title: '¿Cómo reciclar? Aprende con Nacho las 3 R del reciclaje', url: 'https://www.youtube.com/embed/WVrxkF6TcQU?si=ty_OGkjA95OYExHD' },
   ];
 
@@ -28,7 +28,10 @@ const TipsVideos = () => {
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Tips Rápidos</h3>
           <ul className="space-y-4">
             {tips.map(tip => (
-              <li key={tip.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+              <li
+                key={tip.id}
+                className="bg-gray-100 p-4 rounded-lg shadow-sm transition transform hover:bg-green-200 hover:scale-105 cursor-pointer"
+              >
                 <h4 className="font-semibold text-gray-700 mb-2">{tip.title}</h4>
                 <p className="text-gray-600 text-sm">{tip.content}</p>
               </li>
@@ -39,21 +42,31 @@ const TipsVideos = () => {
         <div>
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Videos Educativos</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {videos.map(video => (
-              <div key={video.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                <h4 className="font-semibold text-gray-700 mb-2">{video.title}</h4>
-                <div className="aspect-w-16 aspect-h-9">
-                  <iframe
-                    src={video.url}
-                    title={video.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="w-full h-full rounded-lg"
-                  ></iframe>
+            {videos.map((video, index) => {
+              const isLast = index === videos.length - 1;
+              return (
+                <div
+                  key={video.id}
+                  className={`bg-gray-100 p-4 rounded-lg shadow-sm ${
+                    isLast ? 'md:col-span-1 md:mx-auto' : ''
+                  }`}
+                  style={isLast ? { maxWidth: '600px' } : {}}
+                >
+                  <h4 className="font-semibold text-gray-700 mb-2">{video.title}</h4>
+                  <div className="w-full">
+                    <iframe
+                      src={video.url}
+                      title={video.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      className="w-full rounded-lg"
+                      style={{ height: '600px' }}
+                    ></iframe>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

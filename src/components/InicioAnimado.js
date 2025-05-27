@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const InicioAnimado = ({ setCurrentPage }) => {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const { innerWidth, innerHeight } = window;
+      const x = ((e.clientX - innerWidth / 2) / innerWidth) * 20;
+      const y = ((e.clientY - innerHeight / 2) / innerHeight) * 20;
+      setOffset({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <div className="relative min-h-screen bg-green-500 flex flex-col items-center justify-center overflow-hidden text-white">
       <style>{`
@@ -54,7 +68,7 @@ const InicioAnimado = ({ setCurrentPage }) => {
         }
       `}</style>
 
-      {/* Árbol en el fondo */}
+      {/* Árbol animado en el fondo */}
       <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
         <svg
           className="w-[400px] h-[400px] animate-tree"
@@ -73,8 +87,11 @@ const InicioAnimado = ({ setCurrentPage }) => {
       <div className="leaf leaf4" />
       <div className="leaf leaf5" />
 
-      {/* Contenido principal */}
-      <div className="relative z-10 text-center">
+      {/* Contenido principal con efecto parallax */}
+      <div
+        className="relative z-10 text-center transition-transform duration-200 ease-out"
+        style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
+      >
         <h1 className="text-7xl font-extrabold text-white mb-10 animate-[fadeInUp_1s_ease-out_forwards]">
           EcoRide
         </h1>

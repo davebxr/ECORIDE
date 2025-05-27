@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const Juegos = ({ userData, setUserData }) => {
   const [currentGame, setCurrentGame] = useState(null);
 
-  // MEMORAMA
+  // Estados para memorama (ya estaba)
   const [cards, setCards] = useState([]);
   const [selected, setSelected] = useState([]);
   const [matched, setMatched] = useState([]);
@@ -11,53 +11,30 @@ const Juegos = ({ userData, setUserData }) => {
   const [showStars, setShowStars] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
 
+  // Para Adivina el Emoji
+  const adivinaData = [
+    { emoji: '🌱', pista: 'Comienza con "Planta pequeña".', opciones: ['🌱', '🐢', '🌍'] },
+    { emoji: '♻️', pista: 'Símbolo universal de reciclaje.', opciones: ['🍃', '♻️', '🌊'] },
+    { emoji: '🐢', pista: 'Animal que vive en el agua y tierra.', opciones: ['🦋', '🐢', '🌸'] },
+  ];
+  const [adivinaIndex, setAdivinaIndex] = useState(0);
+  const [adivinaSelected, setAdivinaSelected] = useState(null);
+  const [adivinaMessage, setAdivinaMessage] = useState('');
+
+  // Para Orden para Reciclar
+  // Orden correcto: basura -> separar -> reciclar -> reutilizar -> compostar
+  const ordenCorrecto = ['Basura', 'Separar', 'Reciclar', 'Reutilizar', 'Compostar'];
+  const [ordenItems, setOrdenItems] = useState([]);
+  const [ordenSelected, setOrdenSelected] = useState([]);
+  const [ordenMessage, setOrdenMessage] = useState('');
+
+  // Emojis para memorama
   const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🐢', '🌾', '🦋', '🌻'];
 
-  // JUEGO 2: Trivia simple
-  const triviaQuestions = [
-    {
-      question: "¿Cuál es el gas más responsable del calentamiento global?",
-      options: ["Oxígeno", "Dióxido de carbono", "Nitrógeno", "Hidrógeno"],
-      answer: "Dióxido de carbono",
-    },
-    {
-      question: "¿Qué tipo de energía es renovable?",
-      options: ["Carbón", "Solar", "Petróleo", "Gas natural"],
-      answer: "Solar",
-    },
-    {
-      question: "¿Qué animal es símbolo de la conservación ambiental?",
-      options: ["Tigre", "Elefante", "Panda", "Lobo"],
-      answer: "Panda",
-    },
-  ];
-
-  // Estado trivia
-  const [triviaIndex, setTriviaIndex] = useState(0);
-  const [triviaScore, setTriviaScore] = useState(0);
-  const [triviaAnswered, setTriviaAnswered] = useState(false);
-  const [triviaFeedback, setTriviaFeedback] = useState('');
-
-  // JUEGO 3: Contar reciclaje (simulación)
-  const [recycledCount, setRecycledCount] = useState(0);
-  const [targetRecycle, setTargetRecycle] = useState(10);
-  const [recycleStatus, setRecycleStatus] = useState('playing');
-
-  // JUEGO 4: Adivina el sonido (simplificado texto)
-  const soundClues = [
-    { clue: "Soy verde y doy sombra, ¿qué soy?", answer: "árbol" },
-    { clue: "Sin mí, las aguas están sucias, ¿qué soy?", answer: "planta de tratamiento" },
-    { clue: "Vuelo y ayudo a polinizar, ¿qué soy?", answer: "abeja" },
-  ];
-  const [soundIndex, setSoundIndex] = useState(0);
-  const [soundAnswer, setSoundAnswer] = useState('');
-  const [soundFeedback, setSoundFeedback] = useState('');
-
-  // ------------------ EFECTO MEMORAMA --------------------
+  // --- Memorama setup ---
   useEffect(() => {
     if (currentGame === 'memorama') {
-      const selectedEmojis = emojis.slice(0, 8); // 8 pares, 16 cartas
-      const shuffled = [...selectedEmojis, ...selectedEmojis]
+      const shuffled = [...emojis, ...emojis]
         .map((emoji, i) => ({ id: i, emoji, matched: false }))
         .sort(() => Math.random() - 0.5);
       setCards(shuffled);
@@ -65,12 +42,22 @@ const Juegos = ({ userData, setUserData }) => {
       setMatched([]);
       setGameStatus('playing');
       setIsShuffling(true);
-
       setTimeout(() => setIsShuffling(false), 1000);
     }
   }, [currentGame]);
 
-  // ----------- FUNCIONES MEMORAMA -------------------
+  // --- Orden para Reciclar setup ---
+  useEffect(() => {
+    if (currentGame === 'orden') {
+      // Mezclar los elementos
+      const shuffled = [...ordenCorrecto].sort(() => Math.random() - 0.5);
+      setOrdenItems(shuffled);
+      setOrdenSelected([]);
+      setOrdenMessage('');
+    }
+  }, [currentGame]);
+
+  // Manejo de selección en memorama
   const handleCardClick = (index) => {
     if (
       selected.length === 2 ||
@@ -90,7 +77,7 @@ const Juegos = ({ userData, setUserData }) => {
           const newMatched = [...matched, i1, i2];
           setMatched(newMatched);
           setSelected([]);
-          addPoints(25);
+          addPoints(2);  // Puntos reducidos a 2
           setShowStars(true);
           setTimeout(() => setShowStars(false), 1000);
 
@@ -104,7 +91,7 @@ const Juegos = ({ userData, setUserData }) => {
     }
   };
 
-  // ----------- FUNCION PARA SUMAR PUNTOS -------------
+  // Función para agregar puntos al usuario
   const addPoints = (points) => {
     const total = (userData.puntosReciclaje || 0) + points;
     const updated = {
@@ -116,147 +103,110 @@ const Juegos = ({ userData, setUserData }) => {
     setUserData(updated);
   };
 
-  // --------- FUNCIONES TRIVIA ------------------------
-  const handleTriviaAnswer = (option) => {
-    if (triviaAnswered) return;
-
-    setTriviaAnswered(true);
-    if (option === triviaQuestions[triviaIndex].answer) {
-      setTriviaScore(triviaScore + 1);
-      setTriviaFeedback('¡Correcto! 🎉');
-      addPoints(15);
+  // --- Adivina el Emoji ---
+  const handleAdivinaSelect = (opcion) => {
+    setAdivinaSelected(opcion);
+    if (opcion === adivinaData[adivinaIndex].emoji) {
+      setAdivinaMessage('¡Correcto! +2 puntos');
+      addPoints(2);
+      setTimeout(() => {
+        setAdivinaMessage('');
+        setAdivinaSelected(null);
+        if (adivinaIndex + 1 < adivinaData.length) {
+          setAdivinaIndex(adivinaIndex + 1);
+        } else {
+          setGameStatus('win');
+        }
+      }, 1500);
     } else {
-      setTriviaFeedback(`Incorrecto. La respuesta es "${triviaQuestions[triviaIndex].answer}".`);
+      setAdivinaMessage('Incorrecto, intenta otra vez');
+      setTimeout(() => {
+        setAdivinaMessage('');
+        setAdivinaSelected(null);
+      }, 1500);
     }
   };
 
-  const nextTrivia = () => {
-    setTriviaAnswered(false);
-    setTriviaFeedback('');
-    if (triviaIndex + 1 < triviaQuestions.length) {
-      setTriviaIndex(triviaIndex + 1);
-    } else {
-      setGameStatus('win');
-    }
-  };
+  // --- Orden para Reciclar ---
+  // El usuario selecciona en orden los items para ordenar
+  const handleOrdenSelect = (item) => {
+    if (ordenSelected.length === ordenCorrecto.length) return;
 
-  // --------- FUNCIONES RECICLAJE ----------------------
-  const handleRecycle = () => {
-    if (recycleStatus !== 'playing') return;
-
-    const nuevoConteo = recycledCount + 1;
-    setRecycledCount(nuevoConteo);
-    addPoints(5);
-
-    if (nuevoConteo >= targetRecycle) {
-      setRecycleStatus('win');
-      setGameStatus('win');
-    }
-  };
-
-  const resetRecycle = () => {
-    setRecycledCount(0);
-    setRecycleStatus('playing');
-    setGameStatus('playing');
-  };
-
-  // --------- FUNCIONES ADIVINA EL SONIDO --------------
-  const handleSoundSubmit = () => {
-    if (soundAnswer.trim().toLowerCase() === soundClues[soundIndex].answer.toLowerCase()) {
-      setSoundFeedback('¡Correcto! 🎉');
-      addPoints(20);
-      if (soundIndex + 1 < soundClues.length) {
-        setSoundIndex(soundIndex + 1);
-        setSoundAnswer('');
-      } else {
+    if (item === ordenCorrecto[ordenSelected.length]) {
+      setOrdenSelected([...ordenSelected, item]);
+      addPoints(2);
+      setOrdenMessage('¡Correcto!');
+      if (ordenSelected.length + 1 === ordenCorrecto.length) {
         setGameStatus('win');
       }
     } else {
-      setSoundFeedback('Incorrecto, intenta otra vez.');
+      setOrdenMessage('Incorrecto, inténtalo de nuevo');
+      setOrdenSelected([]);
+      setTimeout(() => setOrdenMessage(''), 1500);
     }
   };
 
-  const resetSound = () => {
-    setSoundIndex(0);
-    setSoundAnswer('');
-    setSoundFeedback('');
-    setGameStatus('playing');
-  };
-
-  // ---------- RESETEAR JUEGO (MENU) -------------------
+  // Reset general para todos los juegos
   const resetGame = () => {
     setCurrentGame(null);
     setGameStatus('playing');
-    setTriviaIndex(0);
-    setTriviaScore(0);
-    setTriviaAnswered(false);
-    setTriviaFeedback('');
-    setRecycledCount(0);
-    setRecycleStatus('playing');
-    setSoundIndex(0);
-    setSoundAnswer('');
-    setSoundFeedback('');
-    setSelected([]);
-    setMatched([]);
+    setAdivinaIndex(0);
+    setAdivinaSelected(null);
+    setAdivinaMessage('');
+    setOrdenSelected([]);
+    setOrdenMessage('');
   };
 
-  // ------------ RENDER JUEGOS --------------------------
+  // Diseño tarjetas de juego para menú principal
+  const juegosData = [
+    {
+      id: 'memorama',
+      emoji: '🃏',
+      titulo: 'Memorama Ecológico',
+      descripcion: 'Encuentra las parejas de elementos ecológicos.',
+      puntos: 2,
+    },
+    {
+      id: 'adivina',
+      emoji: '❓',
+      titulo: 'Adivina el Emoji',
+      descripcion: 'Adivina el emoji según la pista.',
+      puntos: 2,
+    },
+    {
+      id: 'orden',
+      emoji: '🔄',
+      titulo: 'Orden para Reciclar',
+      descripcion: 'Ordena correctamente los pasos para reciclar.',
+      puntos: 2,
+    },
+  ];
 
   return (
     <div className="container mx-auto px-4 py-10 mt-16">
       <div className="bg-white p-6 rounded-lg shadow-lg text-center">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Juegos Ecológicos</h2>
 
-        {!currentGame && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
-              <p className="mb-4">Encuentra las parejas de elementos ecológicos.</p>
-              <button
-                onClick={() => setCurrentGame('memorama')}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+        {!currentGame ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {juegosData.map(({ id, emoji, titulo, descripcion, puntos }) => (
+              <div
+                key={id}
+                onClick={() => setCurrentGame(id)}
+                className="bg-green-100 p-6 rounded-lg cursor-pointer transform transition-transform hover:scale-105 shadow-md"
               >
-                Jugar (25 puntos)
-              </button>
-            </div>
-
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Trivia Ecológica</h3>
-              <p className="mb-4">Responde preguntas sobre el medio ambiente.</p>
-              <button
-                onClick={() => setCurrentGame('trivia')}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-              >
-                Jugar (15 puntos por respuesta correcta)
-              </button>
-            </div>
-
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Contar Reciclaje</h3>
-              <p className="mb-4">Simula reciclar y llega a la meta.</p>
-              <button
-                onClick={() => setCurrentGame('reciclaje')}
-                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
-              >
-                Jugar (5 puntos por reciclaje)
-              </button>
-            </div>
-
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Adivina el Sonido</h3>
-              <p className="mb-4">Adivina qué objeto ecológico describe la pista.</p>
-              <button
-                onClick={() => setCurrentGame('sonido')}
-                className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700"
-              >
-                Jugar (20 puntos por acierto)
-              </button>
-            </div>
+                <div className="text-6xl mb-4 bg-green-300 rounded-full w-20 h-20 mx-auto flex items-center justify-center">
+                  {emoji}
+                </div>
+                <h3 className="text-xl font-semibold mb-2">{titulo}</h3>
+                <p className="mb-4">{descripcion}</p>
+                <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                  Jugar (+{puntos} puntos)
+                </button>
+              </div>
+            ))}
           </div>
-        )}
-
-        {/* MEMORAMA */}
-        {currentGame === 'memorama' && (
+        ) : currentGame === 'memorama' ? (
           <div>
             <button
               onClick={resetGame}
@@ -265,7 +215,7 @@ const Juegos = ({ userData, setUserData }) => {
               ← Volver a los juegos
             </button>
 
-            <div className="grid grid-cols-4 gap-4 perspective relative">
+            <div className="grid grid-cols-5 gap-4 perspective relative">
               {cards.map((card, index) => {
                 const isFlipped = selected.includes(index) || matched.includes(index);
                 const isMatched = matched.includes(index);
@@ -302,230 +252,174 @@ const Juegos = ({ userData, setUserData }) => {
                 <h1 className="text-4xl md:text-6xl font-bold text-green-800 mb-4 animate-bounce">
                   🎉 ¡Felicidades, lo completaste! 🎉
                 </h1>
-                <p className="text-2xl text-green-700 font-semibold">+25 puntos</p>
+                <p className="text-2xl text-green-700 font-semibold">+2 puntos</p>
                 <button
                   onClick={resetGame}
-                  className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 text-xl font-semibold"
+                  className="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
                 >
-                  Volver a juegos
+                  Volver al menú
                 </button>
               </div>
             )}
           </div>
-        )}
-
-        {/* TRIVIA */}
-        {currentGame === 'trivia' && (
-          <div className="max-w-xl mx-auto text-left">
+        ) : currentGame === 'adivina' ? (
+          <div>
             <button
               onClick={resetGame}
-              className="mb-4 text-gray-600 hover:text-blue-600"
+              className="mb-4 text-gray-600 hover:text-green-600"
             >
               ← Volver a los juegos
             </button>
 
-            {gameStatus !== 'win' && (
-              <>
-                <h3 className="text-xl font-bold mb-2">{triviaQuestions[triviaIndex].question}</h3>
-                <div className="space-y-2 mb-4">
-                  {triviaQuestions[triviaIndex].options.map((opt, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleTriviaAnswer(opt)}
-                      disabled={triviaAnswered}
-                      className={`block w-full text-left px-4 py-2 rounded-md border ${
-                        triviaAnswered
-                          ? opt === triviaQuestions[triviaIndex].answer
-                            ? 'bg-green-300 border-green-600'
-                            : 'bg-gray-200 border-gray-400'
-                          : 'bg-white border-gray-300 hover:bg-blue-100'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-                </div>
-
-                {triviaAnswered && (
-                  <>
-                    <p className="mb-4 font-semibold">{triviaFeedback}</p>
-                    <button
-                      onClick={nextTrivia}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                      {triviaIndex + 1 < triviaQuestions.length ? 'Siguiente pregunta' : 'Terminar'}
-                    </button>
-                  </>
-                )}
-              </>
-            )}
-
-            {gameStatus === 'win' && (
-              <div className="text-center text-green-700">
-                <h2 className="text-3xl font-bold mb-4">¡Has terminado la trivia!</h2>
-                <p className="mb-4">Puntaje: {triviaScore} / {triviaQuestions.length}</p>
-                <button
-                  onClick={resetGame}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
-                >
-                  Volver a juegos
-                </button>
+            <div className="p-6 bg-green-50 rounded-lg">
+              <h3 className="text-2xl mb-4">Pista: {adivinaData[adivinaIndex].pista}</h3>
+              <div className="flex justify-center gap-6">
+                {adivinaData[adivinaIndex].opciones.map((opcion, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleAdivinaSelect(opcion)}
+                    disabled={!!adivinaSelected}
+                    className={`text-5xl p-4 rounded-lg border-2 transition ${
+                      adivinaSelected === opcion
+                        ? opcion === adivinaData[adivinaIndex].emoji
+                          ? 'border-green-600 bg-green-200'
+                          : 'border-red-600 bg-red-200'
+                        : 'border-gray-300 hover:bg-green-100'
+                    }`}
+                  >
+                    {opcion}
+                  </button>
+                ))}
               </div>
-            )}
+              {adivinaMessage && (
+                <p className="mt-4 text-lg font-semibold text-center">{adivinaMessage}</p>
+              )}
+            </div>
           </div>
-        )}
-
-        {/* CONTAR RECICLAJE */}
-        {currentGame === 'reciclaje' && (
-          <div className="text-center max-w-md mx-auto">
+        ) : currentGame === 'orden' ? (
+          <div>
             <button
               onClick={resetGame}
-              className="mb-4 text-gray-600 hover:text-purple-600"
+              className="mb-4 text-gray-600 hover:text-green-600"
             >
               ← Volver a los juegos
             </button>
 
-            {recycleStatus === 'playing' && (
-              <>
-                <p className="mb-4 text-lg">Haz clic en el botón para reciclar objetos.</p>
-                <button
-                  onClick={handleRecycle}
-                  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 mb-4"
-                >
-                  Reciclar ♻️
-                </button>
-                <p>
-                  Objetos reciclados: <strong>{recycledCount}</strong> / {targetRecycle}
+            <div className="p-6 bg-green-50 rounded-lg text-center">
+              <h3 className="text-2xl mb-4">Selecciona el orden correcto para reciclar:</h3>
+
+              <div className="flex flex-wrap justify-center gap-4 mb-4">
+                {ordenItems.map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleOrdenSelect(item)}
+                    disabled={ordenSelected.includes(item)}
+                    className="bg-green-200 hover:bg-green-300 px-4 py-2 rounded-lg text-lg font-semibold transition"
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+
+              <div>
+                <p className="mb-4">
+                  Orden seleccionado:{' '}
+                  {ordenSelected.length > 0 ? ordenSelected.join(' → ') : 'Nada aún'}
                 </p>
-              </>
-            )}
-
-            {recycleStatus === 'win' && (
-              <div className="text-green-700">
-                <h2 className="text-3xl font-bold mb-4">¡Meta alcanzada!</h2>
-                <p className="mb-4">¡Has reciclado {recycledCount} objetos! +{recycledCount * 5} puntos</p>
-                <button
-                  onClick={resetRecycle}
-                  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700"
-                >
-                  Jugar otra vez
-                </button>
-                <button
-                  onClick={resetGame}
-                  className="ml-4 text-purple-600 hover:underline"
-                >
-                  Volver a juegos
-                </button>
+                {ordenMessage && (
+                  <p
+                    className={`font-semibold ${
+                      ordenMessage === '¡Correcto!' ? 'text-green-700' : 'text-red-700'
+                    }`}
+                  >
+                    {ordenMessage}
+                  </p>
+                )}
+                {gameStatus === 'win' && (
+                  <div className="mt-4">
+                    <p className="text-green-700 font-bold text-xl">
+                      🎉 ¡Completado! +2 puntos 🎉
+                    </p>
+                    <button
+                      onClick={resetGame}
+                      className="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+                    >
+                      Volver al menú
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
-        )}
-
-        {/* ADIVINA EL SONIDO */}
-        {currentGame === 'sonido' && (
-          <div className="max-w-xl mx-auto text-center">
-            <button
-              onClick={resetGame}
-              className="mb-4 text-gray-600 hover:text-yellow-600"
-            >
-              ← Volver a los juegos
-            </button>
-
-            {gameStatus !== 'win' && (
-              <>
-                <p className="mb-6 text-lg italic">{soundClues[soundIndex].clue}</p>
-                <input
-                  type="text"
-                  placeholder="Escribe tu respuesta aquí"
-                  value={soundAnswer}
-                  onChange={(e) => setSoundAnswer(e.target.value)}
-                  className="border border-gray-300 rounded-md px-4 py-2 mb-4 w-full text-center"
-                />
-                <button
-                  onClick={handleSoundSubmit}
-                  className="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700"
-                >
-                  Enviar
-                </button>
-                <p className="mt-4 font-semibold">{soundFeedback}</p>
-              </>
-            )}
-
-            {gameStatus === 'win' && (
-              <div className="text-green-700">
-                <h2 className="text-3xl font-bold mb-4">¡Correcto, completaste el juego!</h2>
-                <button
-                  onClick={resetSound}
-                  className="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 mr-4"
-                >
-                  Jugar otra vez
-                </button>
-                <button
-                  onClick={resetGame}
-                  className="text-yellow-700 hover:underline"
-                >
-                  Volver a juegos
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+        ) : null}
       </div>
 
-      <style jsx>{`
-        .perspective {
-          perspective: 1000px;
-        }
+      {/* Estilos adicionales para cartas memorama */}
+      <style>{`
         .card {
           width: 100%;
           height: 100%;
+          cursor: pointer;
+          perspective: 1000px;
           position: relative;
-          transform-style: preserve-3d;
-          transition: transform 0.5s;
-          border-radius: 12px;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-          background: white;
-          user-select: none;
-        }
-        .card.flipped {
-          transform: rotateY(180deg);
         }
         .card-face {
-          position: absolute;
           width: 100%;
           height: 100%;
+          position: absolute;
           backface-visibility: hidden;
           display: flex;
-          align-items: center;
           justify-content: center;
+          align-items: center;
           font-size: 3rem;
-          border-radius: 12px;
+          border-radius: 0.5rem;
+          user-select: none;
         }
         .card-front {
-          background: #2a9d8f;
+          background: #4ade80;
           color: white;
         }
         .card-back {
-          background: #e9c46a;
+          background: #16a34a;
+          color: white;
           transform: rotateY(180deg);
         }
-        .stars {
-          animation: fadeIn 1s ease forwards;
-          font-size: 2.5rem;
+        .card.flipped .card-front {
+          transform: rotateY(180deg);
+        }
+        .card.flipped .card-back {
+          transform: rotateY(0deg);
+        }
+        .card.matched {
+          background: #bbf7d0 !important;
+          cursor: default;
+        }
+        .shuffling-card {
+          pointer-events: none;
+        }
+
+        /* Animaciones estrellas */
+        @keyframes stars {
+          0%, 100% { opacity: 1; transform: scale(1) rotate(0deg);}
+          50% { opacity: 0.5; transform: scale(1.3) rotate(15deg);}
         }
         .animate-stars {
-          animation: bounce 1s infinite;
+          animation: stars 1s ease-in-out infinite;
         }
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15%); }
-        }
+        /* Animación fadeIn */
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
         .animate-fadeIn {
-          animation: fadeIn 0.7s ease forwards;
+          animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Hover general para agrandar juegos en menú */
+        .cursor-pointer:hover {
+          transform: scale(1.1);
+          box-shadow: 0 0 15px rgba(34,197,94,0.7);
+          transition: transform 0.3s ease;
         }
       `}</style>
     </div>

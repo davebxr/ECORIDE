@@ -9,9 +9,14 @@ const InicioAnimado = ({ setCurrentPage }) => {
           50% { transform: translateY(-15px); }
         }
 
-        @keyframes spin-left {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(-360deg); }
+        @keyframes fall {
+          0% { transform: translateY(-100px) rotate(0deg); opacity: 0.8; }
+          100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes fadeInUp {
+          0% { opacity: 0; transform: translateY(40px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes bounceIn {
@@ -21,52 +26,61 @@ const InicioAnimado = ({ setCurrentPage }) => {
           100% { transform: scale(1); }
         }
 
-        @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(40px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-planet {
-          animation: float 5s ease-in-out infinite, spin-left 100s linear infinite;
+        .animate-tree {
+          animation: float 6s ease-in-out infinite;
           opacity: 0.1;
         }
 
-        .animate-fade-in-up {
-          animation: fadeInUp 1s ease-out forwards;
+        .leaf {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          background-color: white;
+          border-radius: 50%;
+          opacity: 0.7;
+          animation: fall linear infinite;
         }
 
-        .animate-bounce-in {
-          animation: bounceIn 1s ease-out;
-        }
+        .leaf1 { left: 10%; animation-duration: 7s; animation-delay: 0s; }
+        .leaf2 { left: 25%; animation-duration: 9s; animation-delay: 1s; }
+        .leaf3 { left: 40%; animation-duration: 6s; animation-delay: 2s; }
+        .leaf4 { left: 60%; animation-duration: 8s; animation-delay: 0.5s; }
+        .leaf5 { left: 75%; animation-duration: 10s; animation-delay: 1.5s; }
 
         .button-anim:hover {
           transform: scale(1.1);
-          background-color: #15803d; /* verde oscuro */
+          background-color: #15803d;
           color: white;
         }
       `}</style>
 
-      {/* Planeta Tierra girando al fondo */}
+      {/* Árbol en el fondo */}
       <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
         <svg
-          className="w-[500px] h-[500px] animate-planet"
-          viewBox="0 0 24 24"
+          className="w-[400px] h-[400px] animate-tree"
+          viewBox="0 0 64 64"
           fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
-            10-4.48 10-10S17.52 2 12 2zm4.83 15.24c-.78.55-1.85.95-2.83 1.05-.21-.47-.35-.96-.41-1.46-.13-1.11-.94-2.06-2.04-2.41-.48-.16-.91-.47-1.21-.88l-.9-1.3c-.28-.4-.39-.9-.31-1.37.16-.94.9-1.7 1.84-1.89.48-.1.98.01 1.39.3.49.33.85.82 1.07 1.38.15.36.49.61.88.67.54.09 1.05.35 1.45.74.53.5.8 1.2.75 1.91-.03.47.17.94.54 1.24.6.5.85 1.29.65 2.02z" />
+          <path d="M32 2C25 6 20 13 20 20c0 4 2 7 4 10-3 1-6 4-6 8 0 4 3 7 6 8-4 3-6 8-6 12h28c0-4-2-9-6-12 3-1 6-4 6-8 0-4-3-7-6-8 2-3 4-6 4-10 0-7-5-14-12-18zM30 60h4V48h-4v12z" />
         </svg>
       </div>
 
+      {/* Hojas cayendo */}
+      <div className="leaf leaf1" />
+      <div className="leaf leaf2" />
+      <div className="leaf leaf3" />
+      <div className="leaf leaf4" />
+      <div className="leaf leaf5" />
+
       {/* Contenido principal */}
       <div className="relative z-10 text-center">
-        <h1 className="text-7xl font-extrabold text-white mb-10 animate-fade-in-up">
+        <h1 className="text-7xl font-extrabold text-white mb-10 animate-[fadeInUp_1s_ease-out_forwards]">
           EcoRide
         </h1>
         <button
           onClick={() => setCurrentPage('registro')}
-          className="bg-white text-green-700 px-10 py-4 rounded-full text-xl font-bold shadow-xl transition-all duration-300 transform animate-bounce-in button-anim"
+          className="bg-white text-green-700 px-10 py-4 rounded-full text-xl font-bold shadow-xl transition-all duration-300 transform animate-[bounceIn_1s_ease-out] button-anim"
         >
           ¡Empieza a Reciclar!
         </button>

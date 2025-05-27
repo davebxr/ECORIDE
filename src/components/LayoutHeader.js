@@ -40,16 +40,18 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
       {!hasLoggedOut ? (
         <>
           <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-20 flex items-center px-4 py-3">
-            {/* Avatar izquierdo */}
-            <div className="flex items-center w-20 justify-center">
+            {/* Avatar izquierdo con imagen, borde y sombra */}
+            <div className="flex items-center w-20 justify-center relative">
               <div
                 onClick={toggleProfileMenu}
-                className="w-12 h-12 rounded-full border-4 border-green-600 cursor-pointer bg-black bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80')] bg-center bg-cover"
+                className="w-14 h-14 rounded-full border-4 border-green-600 shadow-lg cursor-pointer bg-center bg-cover"
+                style={{ backgroundImage: "url('/fotos/perfil.jpg')" }}
                 title="Perfil"
               ></div>
 
+              {/* Menú Cerrar sesión en PC */}
               {isProfileMenuOpen && (
-                <div className="absolute top-16 left-4 bg-white border border-gray-300 rounded-md shadow-lg w-40 z-30">
+                <div className="absolute top-16 left-2 bg-white border border-gray-300 rounded-md shadow-lg w-40 z-30">
                   <button
                     onClick={openLogoutModal}
                     className="block w-full text-left px-4 py-2 hover:bg-green-100 text-gray-700"
@@ -95,7 +97,25 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                 Menú
               </button>
               {isDropdownOpen && (
-                <nav className="absolute top-10 right-0 w-screen max-w-xs bg-white border border-gray-200 rounded-md shadow-lg z-40">
+                <nav className="absolute top-10 right-0 w-screen max-w-xs bg-white border border-gray-200 rounded-md shadow-lg z-40 flex flex-col items-center">
+                  {/* Avatar dentro menú móvil */}
+                  <div
+                    onClick={toggleProfileMenu}
+                    className="w-20 h-20 rounded-full border-4 border-green-600 shadow-lg cursor-pointer mb-4 bg-center bg-cover"
+                    style={{ backgroundImage: "url('/fotos/perfil.jpg')" }}
+                    title="Perfil"
+                  ></div>
+
+                  {/* Botón cerrar sesión en móvil si está abierto */}
+                  {isProfileMenuOpen && (
+                    <button
+                      onClick={openLogoutModal}
+                      className="mb-4 px-6 py-2 bg-green-100 text-green-700 rounded-full shadow hover:bg-green-200 transition"
+                    >
+                      Cerrar sesión
+                    </button>
+                  )}
+
                   <ul className="flex flex-col w-full">
                     {pages.map(({ key, label }) => {
                       const isSelected = currentPage === key;

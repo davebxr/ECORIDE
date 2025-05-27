@@ -20,12 +20,7 @@ const InicioAnimado = ({ setCurrentPage }) => {
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15px); }
-        }
-
-        @keyframes fall {
-          0% { transform: translateY(-100px) rotate(0deg); opacity: 0.8; }
-          100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+          50% { transform: translateY(-10px); }
         }
 
         @keyframes fadeInUp {
@@ -40,26 +35,31 @@ const InicioAnimado = ({ setCurrentPage }) => {
           100% { transform: scale(1); }
         }
 
+        @keyframes fall {
+          0% { transform: translateY(-50px) rotate(0deg); opacity: 0.8; }
+          100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
         .animate-tree {
           animation: float 6s ease-in-out infinite;
-          opacity: 0.1;
+          opacity: 0.2;
         }
 
         .leaf {
           position: absolute;
-          width: 20px;
-          height: 20px;
-          background-color: white;
-          border-radius: 50%;
-          opacity: 0.7;
+          width: 15px;
+          height: 15px;
+          background-color: #bbf7d0;
+          clip-path: polygon(50% 0%, 100% 40%, 70% 100%, 30% 100%, 0% 40%);
+          opacity: 0.8;
           animation: fall linear infinite;
         }
 
-        .leaf1 { left: 10%; animation-duration: 7s; animation-delay: 0s; }
-        .leaf2 { left: 25%; animation-duration: 9s; animation-delay: 1s; }
-        .leaf3 { left: 40%; animation-duration: 6s; animation-delay: 2s; }
-        .leaf4 { left: 60%; animation-duration: 8s; animation-delay: 0.5s; }
-        .leaf5 { left: 75%; animation-duration: 10s; animation-delay: 1.5s; }
+        .leaf1 { left: 15%; animation-duration: 6s; animation-delay: 0s; }
+        .leaf2 { left: 30%; animation-duration: 8s; animation-delay: 1s; }
+        .leaf3 { left: 50%; animation-duration: 7s; animation-delay: 0.5s; }
+        .leaf4 { left: 70%; animation-duration: 9s; animation-delay: 2s; }
+        .leaf5 { left: 85%; animation-duration: 6.5s; animation-delay: 1.2s; }
 
         .button-anim:hover {
           transform: scale(1.1);
@@ -68,19 +68,22 @@ const InicioAnimado = ({ setCurrentPage }) => {
         }
       `}</style>
 
-      {/* Árbol animado en el fondo */}
+      {/* Árbol SVG bonito */}
       <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
         <svg
-          className="w-[400px] h-[400px] animate-tree"
+          className="w-[300px] h-[300px] animate-tree"
           viewBox="0 0 64 64"
-          fill="currentColor"
+          fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d="M32 2C25 6 20 13 20 20c0 4 2 7 4 10-3 1-6 4-6 8 0 4 3 7 6 8-4 3-6 8-6 12h28c0-4-2-9-6-12 3-1 6-4 6-8 0-4-3-7-6-8 2-3 4-6 4-10 0-7-5-14-12-18zM30 60h4V48h-4v12z" />
+          <path fill="#6B4226" d="M28 40h8v18h-8z" />
+          <circle cx="32" cy="20" r="14" fill="#22C55E" />
+          <circle cx="22" cy="24" r="10" fill="#16A34A" />
+          <circle cx="42" cy="24" r="10" fill="#16A34A" />
         </svg>
       </div>
 
-      {/* Hojas cayendo */}
+      {/* Hojas verdes cayendo alrededor */}
       <div className="leaf leaf1" />
       <div className="leaf leaf2" />
       <div className="leaf leaf3" />

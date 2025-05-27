@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const InicioAnimado = ({ setCurrentPage }) => {
@@ -43,7 +44,8 @@ const InicioAnimado = ({ setCurrentPage }) => {
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* Contenido del SVG detallado de la Tierra */}
-          {/* Debido a la extensión del código, se recomienda copiar el SVG completo desde la fuente proporcionada */}
+          {/* Por razones de espacio, se omite el contenido completo del SVG */}
+          {/* Puedes copiar y pegar el contenido del SVG desde el enlace proporcionado */}
         </svg>
       </div>
 

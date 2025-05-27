@@ -29,7 +29,6 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
   };
   const closeLogoutModal = () => setIsLogoutModalOpen(false);
 
-  // Cuando confirme cerrar sesión, mostrar pantalla final con animación
   const confirmLogout = () => {
     setIsLogoutModalOpen(false);
     setHasLoggedOut(true);
@@ -44,7 +43,8 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
             <div className="flex items-center w-20 justify-center relative">
               <div
                 onClick={toggleProfileMenu}
-                className="w-12 h-12 rounded-full border-4 border-green-600 cursor-pointer bg-center bg-cover bg-[url('/danne.jpg')]"
+                className="w-12 h-12 rounded-full border-4 border-green-600 cursor-pointer bg-center bg-cover"
+                style={{ backgroundImage: "url('/danne.jpg')" }}
                 title="Perfil"
               ></div>
 
@@ -104,7 +104,9 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                           <button
                             onClick={() => handlePageChange(key)}
                             className={`w-full text-left px-6 py-3 transition-colors ${
-                              isSelected ? 'bg-green-600 text-white font-semibold' : 'text-gray-700 hover:bg-green-100'
+                              isSelected
+                                ? 'bg-green-600 text-white font-semibold'
+                                : 'text-gray-700 hover:bg-green-100'
                             }`}
                           >
                             {label}
@@ -148,16 +150,23 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
           )}
         </>
       ) : (
-        // Pantalla final animada
         <div className="fixed inset-0 bg-green-100 flex flex-col justify-center items-center z-50 p-4">
           <h1 className="text-4xl md:text-6xl font-extrabold text-green-700 mb-6 animate-zoomIn">
             Gracias por visitar EcoRide
           </h1>
           <div className="flex space-x-4 text-4xl md:text-6xl animate-emojiMove">
-            <span role="img" aria-label="Globo terráqueo">🌍</span>
-            <span role="img" aria-label="Reciclaje">♻️</span>
-            <span role="img" aria-label="Planta">🌱</span>
-            <span role="img" aria-label="Hoja">🍃</span>
+            <span role="img" aria-label="Globo terráqueo">
+              🌍
+            </span>
+            <span role="img" aria-label="Reciclaje">
+              ♻️
+            </span>
+            <span role="img" aria-label="Planta">
+              🌱
+            </span>
+            <span role="img" aria-label="Hoja">
+              🍃
+            </span>
           </div>
         </div>
       )}
@@ -182,7 +191,8 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
         }
 
         @keyframes emojiMove {
-          0%, 100% {
+          0%,
+          100% {
             transform: translateY(0);
           }
           50% {

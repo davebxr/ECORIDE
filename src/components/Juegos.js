@@ -1,268 +1,242 @@
 import React, { useState, useEffect } from 'react';
 
-const Juegos = ({ userData, setUserData }) => {
-  const [currentGame, setCurrentGame] = useState(null);
-  const [cards, setCards] = useState([]);
-  const [selected, setSelected] = useState([]);
-  const [matched, setMatched] = useState([]);
-  const [gameStatus, setGameStatus] = useState('playing');
-  const [showStars, setShowStars] = useState(false);
-  const [isShuffling, setIsShuffling] = useState(false);
+const Juegos = () => {
+  // Estado general
+  const [currentGame, setCurrentGame] = useState(null); // null | 'memorama' | 'adivinaEmoji'
+  const [points, setPoints] = useState(0);
 
-  const emojis = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🐢', '🌾', '🦋', '🌻'];
+  // --- MEMORAMA ECOLOGICO ---
+
+  // Cartas memorama
+  const cartas = [
+    { id: 1, tipo: 'recycle', emoji: '♻️' },
+    { id: 2, tipo: 'tree', emoji: '🌳' },
+    { id: 3, tipo: 'flower', emoji: '🌸' },
+    { id: 4, tipo: 'water', emoji: '💧' },
+    { id: 5, tipo: 'sun', emoji: '☀️' },
+    { id: 6, tipo: 'earth', emoji: '🌍' },
+  ];
+
+  // Estado memorama
+  const [cartasJuego, setCartasJuego] = useState([]);
+  const [cartasSeleccionadas, setCartasSeleccionadas] = useState([]);
+  const [cartasAcertadas, setCartasAcertadas] = useState([]);
 
   useEffect(() => {
     if (currentGame === 'memorama') {
-      const shuffled = [...emojis, ...emojis]
-        .map((emoji, i) => ({ id: i, emoji, matched: false }))
-        .sort(() => Math.random() - 0.5);
-      setCards(shuffled);
-      setSelected([]);
-      setMatched([]);
-      setGameStatus('playing');
-      setIsShuffling(true);
-
-      // Quitar la animación después de 1 segundo (duración de la animación)
-      setTimeout(() => setIsShuffling(false), 1000);
+      iniciarMemorama();
     }
   }, [currentGame]);
 
-  const handleCardClick = (index) => {
+  const iniciarMemorama = () => {
+    const cartasDuplicadas = [...cartas, ...cartas].map((c, i) => ({
+      ...c,
+      uid: i + 1, // id único para cada carta
+    }));
+    // Barajar
+    for (let i = cartasDuplicadas.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cartasDuplicadas[i], cartasDuplicadas[j]] = [cartasDuplicadas[j], cartasDuplicadas[i]];
+    }
+    setCartasJuego(cartasDuplicadas);
+    setCartasSeleccionadas([]);
+    setCartasAcertadas([]);
+  };
+
+  // Al seleccionar una carta
+  const handleClickCarta = (uid) => {
     if (
-      selected.length === 2 ||
-      selected.includes(index) ||
-      matched.includes(index) ||
-      isShuffling
-    )
-      return;
+      cartasSeleccionadas.length === 2 ||
+      cartasSeleccionadas.includes(uid) ||
+      cartasAcertadas.includes(uid)
+    ) {
+      return; // No hacer nada si ya 2 seleccionadas o ya acertada o ya seleccionada
+    }
 
-    const newSelected = [...selected, index];
-    setSelected(newSelected);
+    const nuevasSeleccionadas = [...cartasSeleccionadas, uid];
+    setCartasSeleccionadas(nuevasSeleccionadas);
 
-    if (newSelected.length === 2) {
-      const [i1, i2] = newSelected;
-      if (cards[i1].emoji === cards[i2].emoji) {
+    if (nuevasSeleccionadas.length === 2) {
+      // Verificar si son pareja
+      const [primera, segunda] = nuevasSeleccionadas.map((id) =>
+        cartasJuego.find((c) => c.uid === id)
+      );
+      if (primera.tipo === segunda.tipo) {
+        // Acertaron pareja
         setTimeout(() => {
-          const newMatched = [...matched, i1, i2];
-          setMatched(newMatched);
-          setSelected([]);
-          addPoints(25);  // <-- Aquí cambió de 120 a 25
-          setShowStars(true);
-          setTimeout(() => setShowStars(false), 1000);
-
-          if (newMatched.length === cards.length) {
-            setGameStatus('win');
-          }
-        }, 600);
+          setCartasAcertadas((prev) => [...prev, primera.uid, segunda.uid]);
+          setCartasSeleccionadas([]);
+          addPoints(25);
+        }, 700);
       } else {
-        setTimeout(() => setSelected([]), 1000);
+        // No acertaron pareja
+        setTimeout(() => {
+          setCartasSeleccionadas([]);
+        }, 1000);
       }
     }
   };
 
-  const addPoints = (points) => {
-    const total = (userData.puntosReciclaje || 0) + points;
-    const updated = {
-      ...userData,
-      puntosReciclaje: total,
-      mascotaDesbloqueada: total >= 1000,
-    };
-    localStorage.setItem('ecorideUser', JSON.stringify(updated));
-    setUserData(updated);
+  // --- JUEGO ADIVINA EL EMOJI ---
+
+  const emojisAdivina = ['🌱', '🌍', '♻️', '🍃', '🌸', '🌊', '🐢', '🌾', '🦋', '🌻'];
+
+  const [adivinaEmoji, setAdivinaEmoji] = useState(null);
+  const [opciones, setOpciones] = useState([]);
+  const [resultado, setResultado] = useState(null);
+
+  useEffect(() => {
+    if (currentGame === 'adivinaEmoji') {
+      iniciarJuegoAdivina();
+    }
+  }, [currentGame]);
+
+  const iniciarJuegoAdivina = () => {
+    const correcto = emojisAdivina[Math.floor(Math.random() * emojisAdivina.length)];
+    let opcionesJuego = [correcto];
+    while (opcionesJuego.length < 3) {
+      const randomEmoji = emojisAdivina[Math.floor(Math.random() * emojisAdivina.length)];
+      if (!opcionesJuego.includes(randomEmoji)) opcionesJuego.push(randomEmoji);
+    }
+    opcionesJuego.sort(() => Math.random() - 0.5);
+
+    setAdivinaEmoji(correcto);
+    setOpciones(opcionesJuego);
+    setResultado(null);
   };
 
+  const handleOpcionClick = (emoji) => {
+    if (resultado) return;
+
+    if (emoji === adivinaEmoji) {
+      setResultado('correcto');
+      addPoints(20);
+    } else {
+      setResultado('incorrecto');
+    }
+  };
+
+  // --- FUNCION PARA SUMAR PUNTOS ---
+
+  const addPoints = (pts) => {
+    setPoints((prev) => prev + pts);
+  };
+
+  // --- RESET AL MENU PRINCIPAL ---
   const resetGame = () => {
     setCurrentGame(null);
-    setGameStatus('playing');
+    setResultado(null);
+    setCartasSeleccionadas([]);
+    setCartasAcertadas([]);
   };
 
   return (
-    <div className="container mx-auto px-4 py-10 mt-16">
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Juegos Ecológicos</h2>
+    <div className="container mx-auto p-4 max-w-lg">
+      <h1 className="text-3xl font-bold mb-6 text-center">Juegos Ecológicos</h1>
+      <p className="mb-6 text-center text-lg font-semibold">Puntos: {points}</p>
 
-        {!currentGame ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
-              <p className="mb-4">Encuentra las parejas de elementos ecológicos.</p>
-              <button
-                onClick={() => setCurrentGame('memorama')}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-              >
-                Jugar (25 puntos) {/* Cambié esto también */}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div>
+      {!currentGame ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-100 p-4 rounded-lg text-center">
+            <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
+            <p className="mb-4">Encuentra las parejas de elementos ecológicos.</p>
             <button
-              onClick={resetGame}
-              className="mb-4 text-gray-600 hover:text-green-600"
+              onClick={() => setCurrentGame('memorama')}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
             >
-              ← Volver a los juegos
+              Jugar (25 puntos)
             </button>
-
-            <div className="grid grid-cols-5 gap-4 perspective relative">
-              {cards.map((card, index) => {
-                const isFlipped = selected.includes(index) || matched.includes(index);
-                const isMatched = matched.includes(index);
-
-                return (
-                  <div
-                    key={card.id}
-                    onClick={() => handleCardClick(index)}
-                    className={`relative w-full aspect-square cursor-pointer ${
-                      isShuffling ? 'shuffling-card' : ''
-                    }`}
-                  >
-                    <div
-                      className={`card ${isFlipped ? 'flipped' : ''} ${
-                        isMatched ? 'matched' : ''
-                      }`}
-                    >
-                      <div className="card-face card-front">❓</div>
-                      <div className="card-face card-back">{card.emoji}</div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {showStars && (
-                <div className="stars absolute inset-0 flex items-center justify-center pointer-events-none z-50">
-                  <div className="text-yellow-400 text-5xl animate-stars">🌟🌟🌟</div>
-                </div>
-              )}
-            </div>
-
-            {gameStatus === 'win' && (
-              <div className="fixed inset-0 bg-green-100 flex flex-col items-center justify-center z-50 animate-fadeIn">
-                <h1 className="text-4xl md:text-6xl font-bold text-green-800 mb-4 animate-bounce">
-                  🎉 ¡Felicidades, lo completaste! 🎉
-                </h1>
-                <p className="text-2xl text-green-700 font-semibold">+25 puntos</p> {/* Aquí también */}
-                <button
-                  onClick={resetGame}
-                  className="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
-                >
-                  Volver al menú
-                </button>
-              </div>
-            )}
           </div>
-        )}
-      </div>
+          <div className="bg-gray-100 p-4 rounded-lg text-center">
+            <h3 className="text-xl font-semibold mb-4">Adivina el Emoji</h3>
+            <p className="mb-4">Descubre cuál es el emoji oculto entre las opciones.</p>
+            <button
+              onClick={() => setCurrentGame('adivinaEmoji')}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+            >
+              Jugar (20 puntos)
+            </button>
+          </div>
+        </div>
+      ) : currentGame === 'memorama' ? (
+        <div className="text-center">
+          <button
+            onClick={resetGame}
+            className="mb-4 text-gray-600 hover:text-green-600"
+          >
+            ← Volver a los juegos
+          </button>
+          <h3 className="text-xl font-semibold mb-4">Memorama Ecológico</h3>
+          <div className="grid grid-cols-4 gap-4 justify-center max-w-xs mx-auto">
+            {cartasJuego.map((c) => {
+              const mostrar =
+                cartasSeleccionadas.includes(c.uid) || cartasAcertadas.includes(c.uid);
+              return (
+                <button
+                  key={c.uid}
+                  onClick={() => handleClickCarta(c.uid)}
+                  disabled={mostrar}
+                  className={`bg-green-200 rounded-lg text-3xl py-4 ${
+                    mostrar ? 'cursor-default' : 'hover:bg-green-300'
+                  }`}
+                >
+                  {mostrar ? c.emoji : '❓'}
+                </button>
+              );
+            })}
+          </div>
+          {cartasAcertadas.length === cartasJuego.length && (
+            <p className="mt-6 font-bold text-green-700 text-lg">
+              ¡Felicidades! Completaste el memorama.
+            </p>
+          )}
+        </div>
+      ) : currentGame === 'adivinaEmoji' ? (
+        <div className="text-center">
+          <button
+            onClick={resetGame}
+            className="mb-4 text-gray-600 hover:text-green-600"
+          >
+            ← Volver a los juegos
+          </button>
 
-      {/* Estilos personalizados */}
-      <style jsx>{`
-        .perspective {
-          perspective: 1000px;
-        }
-        .card {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          transform-style: preserve-3d;
-          transition: transform 0.6s;
-        }
-        .flipped {
-          transform: rotateY(180deg);
-        }
-        .card-face {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          backface-visibility: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 2rem;
-          border-radius: 0.5rem;
-        }
-        .card-front {
-          background-color: #bee3f8;
-        }
-        .card-back {
-          background-color: #c6f6d5;
-          transform: rotateY(180deg);
-        }
-        .matched .card-back {
-          background-color: #fcd34d; /* amarillo/dorado */
-          animation: pop 0.3s ease-out;
-        }
+          <h3 className="text-xl font-semibold mb-4">Adivina el Emoji</h3>
+          <p className="mb-6 text-lg">¿Cuál es el emoji oculto?</p>
 
-        /* Animación shuffle - movimiento aleatorio al inicio */
-        .shuffling-card {
-          animation: shuffle-move 1s ease-in-out forwards;
-          pointer-events: none; /* no clickeable durante shuffle */
-        }
+          <div className="mb-6 text-6xl">
+            {resultado === 'correcto' ? adivinaEmoji : '❓'}
+          </div>
 
-        @keyframes shuffle-move {
-          0% {
-            transform: translate(0, 0);
-          }
-          20% {
-            transform: translate(-10px, -10px);
-          }
-          40% {
-            transform: translate(10px, -10px);
-          }
-          60% {
-            transform: translate(-10px, 10px);
-          }
-          80% {
-            transform: translate(10px, 10px);
-          }
-          100% {
-            transform: translate(0, 0);
-          }
-        }
+          <div className="flex justify-center gap-6 mb-6">
+            {opciones.map((emoji) => (
+              <button
+                key={emoji}
+                onClick={() => handleOpcionClick(emoji)}
+                className="bg-green-200 px-6 py-4 rounded-lg text-4xl hover:bg-green-300"
+                disabled={!!resultado}
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
 
-        .animate-stars {
-          animation: stars 1s ease-out forwards;
-        }
+          {resultado === 'correcto' && (
+            <p className="text-green-700 font-bold mb-4">¡Correcto! +20 puntos 🎉</p>
+          )}
+          {resultado === 'incorrecto' && (
+            <p className="text-red-600 font-bold mb-4">Incorrecto, intenta de nuevo.</p>
+          )}
 
-        @keyframes stars {
-          0% {
-            transform: scale(0.5);
-            opacity: 0;
-          }
-          50% {
-            transform: scale(1.2);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 0;
-          }
-        }
-
-        @keyframes pop {
-          0% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.15);
-          }
-          100% {
-            transform: scale(1);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out;
-        }
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
+          {(resultado === 'correcto' || resultado === 'incorrecto') && (
+            <button
+              onClick={iniciarJuegoAdivina}
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+            >
+              Jugar otra vez
+            </button>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 };

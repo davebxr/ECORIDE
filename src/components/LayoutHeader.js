@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Asegúrate de tener react-router-dom instalado
 
 const LayoutHeader = ({ currentPage, setCurrentPage }) => {
-  const navigate = useNavigate();
+  if (currentPage === 'inicio' || currentPage === 'registro') return null;
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -23,37 +23,35 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
 
   const toggleDropdown = () => setIsDropdownOpen((v) => !v);
   const toggleProfileMenu = () => setIsProfileMenuOpen((v) => !v);
-
   const openLogoutModal = () => {
     setIsProfileMenuOpen(false);
     setIsLogoutModalOpen(true);
   };
-
   const closeLogoutModal = () => setIsLogoutModalOpen(false);
 
+  // Cuando confirme cerrar sesión, mostrar pantalla final con animación
   const confirmLogout = () => {
     setIsLogoutModalOpen(false);
     setHasLoggedOut(true);
-    setTimeout(() => navigate('/InicioAnimado'), 2000); // Redirige con retraso para ver animación
   };
-
-  if (currentPage === 'inicio' || currentPage === 'registro') return null;
 
   return (
     <>
       {!hasLoggedOut ? (
         <>
           <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-20 flex items-center px-4 py-3">
-            {/* Imagen circular */}
-            <div className="flex items-center w-20 justify-center">
+            {/* Avatar izquierdo con imagen, borde y sombra */}
+            <div className="flex items-center w-20 justify-center relative">
               <div
                 onClick={toggleProfileMenu}
-                className="w-12 h-12 rounded-full border-4 border-green-600 cursor-pointer bg-[url('/danne.jpg')] bg-center bg-cover"
+                className="w-14 h-14 rounded-full border-4 border-green-600 shadow-lg cursor-pointer bg-center bg-cover"
+                style={{ backgroundImage: "url('/fotos/perfil.jpg')" }}
                 title="Perfil"
               ></div>
 
+              {/* Menú Cerrar sesión en PC */}
               {isProfileMenuOpen && (
-                <div className="absolute top-16 left-4 bg-white border border-gray-300 rounded-md shadow-lg w-40 z-30">
+                <div className="absolute top-16 left-2 bg-white border border-gray-300 rounded-md shadow-lg w-40 z-30">
                   <button
                     onClick={openLogoutModal}
                     className="block w-full text-left px-4 py-2 hover:bg-green-100 text-gray-700"
@@ -75,9 +73,13 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                   <button
                     key={key}
                     onClick={() => handlePageChange(key)}
-                    className={`text-gray-700 transition-transform duration-200 ${
-                      isSelected ? 'text-green-600 font-semibold scale-110' : 'hover:scale-105'
-                    }`}
+                    className={`
+                      text-gray-700
+                      transition-transform
+                      duration-200
+                      ${isSelected ? 'text-green-600 font-semibold scale-110' : 'hover:scale-105'}
+                    `}
+                    style={{ transformOrigin: 'center' }}
                   >
                     {label}
                   </button>
@@ -89,12 +91,31 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
             <div className="md:hidden relative">
               <button
                 onClick={toggleDropdown}
-                className="text-gray-600 hover:text-green-600 transition-colors"
+                className="text-gray-600 hover:text-green-600 transition-colors focus:outline-none"
+                aria-label="Abrir menú"
               >
                 Menú
               </button>
               {isDropdownOpen && (
-                <nav className="absolute top-10 right-0 w-screen max-w-xs bg-white border border-gray-200 rounded-md shadow-lg z-40">
+                <nav className="absolute top-10 right-0 w-screen max-w-xs bg-white border border-gray-200 rounded-md shadow-lg z-40 flex flex-col items-center">
+                  {/* Avatar dentro menú móvil */}
+                  <div
+                    onClick={toggleProfileMenu}
+                    className="w-20 h-20 rounded-full border-4 border-green-600 shadow-lg cursor-pointer mb-4 bg-center bg-cover"
+                    style={{ backgroundImage: "url('/fotos/perfil.jpg')" }}
+                    title="Perfil"
+                  ></div>
+
+                  {/* Botón cerrar sesión en móvil si está abierto */}
+                  {isProfileMenuOpen && (
+                    <button
+                      onClick={openLogoutModal}
+                      className="mb-4 px-6 py-2 bg-green-100 text-green-700 rounded-full shadow hover:bg-green-200 transition"
+                    >
+                      Cerrar sesión
+                    </button>
+                  )}
+
                   <ul className="flex flex-col w-full">
                     {pages.map(({ key, label }) => {
                       const isSelected = currentPage === key;
@@ -103,9 +124,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                           <button
                             onClick={() => handlePageChange(key)}
                             className={`w-full text-left px-6 py-3 transition-colors ${
-                              isSelected
-                                ? 'bg-green-600 text-white font-semibold'
-                                : 'text-gray-700 hover:bg-green-100'
+                              isSelected ? 'bg-green-600 text-white font-semibold' : 'text-gray-700 hover:bg-green-100'
                             }`}
                           >
                             {label}
@@ -149,6 +168,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
           )}
         </>
       ) : (
+        // Pantalla final animada
         <div className="fixed inset-0 bg-green-100 flex flex-col justify-center items-center z-50 p-4">
           <h1 className="text-4xl md:text-6xl font-extrabold text-green-700 mb-6 animate-zoomIn">
             Gracias por visitar EcoRide
@@ -162,28 +182,46 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
         </div>
       )}
 
-      {/* Animaciones CSS */}
       <style jsx>{`
         @keyframes zoomIn {
-          0% { transform: scale(0); opacity: 0; }
-          60% { transform: scale(1.1); opacity: 1; }
-          100% { transform: scale(1); opacity: 1; }
+          0% {
+            transform: scale(0);
+            opacity: 0;
+          }
+          60% {
+            transform: scale(1.1);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
         .animate-zoomIn {
           animation: zoomIn 0.8s ease forwards;
         }
 
         @keyframes emojiMove {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
         }
         .animate-emojiMove span {
           display: inline-block;
           animation: emojiMove 2s ease-in-out infinite;
         }
-        .animate-emojiMove span:nth-child(2) { animation-delay: 0.2s; }
-        .animate-emojiMove span:nth-child(3) { animation-delay: 0.4s; }
-        .animate-emojiMove span:nth-child(4) { animation-delay: 0.6s; }
+        .animate-emojiMove span:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+        .animate-emojiMove span:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+        .animate-emojiMove span:nth-child(4) {
+          animation-delay: 0.6s;
+        }
       `}</style>
     </>
   );

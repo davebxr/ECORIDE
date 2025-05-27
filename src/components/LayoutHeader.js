@@ -28,8 +28,6 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
     setIsLogoutModalOpen(true);
   };
   const closeLogoutModal = () => setIsLogoutModalOpen(false);
-
-  // Cuando confirme cerrar sesión, mostrar pantalla final con animación
   const confirmLogout = () => {
     setIsLogoutModalOpen(false);
     setHasLoggedOut(true);
@@ -44,7 +42,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
             <div className="flex items-center w-20 justify-center">
               <div
                 onClick={toggleProfileMenu}
-                className="w-12 h-12 rounded-full border-4 border-green-600 cursor-pointer bg-black bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80')] bg-center bg-cover"
+                className="w-12 h-12 rounded-full border-4 border-green-600 cursor-pointer bg-black bg-[url('/danne.jpg')] bg-center bg-cover"
                 title="Perfil"
               ></div>
 
@@ -71,12 +69,12 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                   <button
                     key={key}
                     onClick={() => handlePageChange(key)}
-                    className={
+                    className={`
                       text-gray-700
                       transition-transform
                       duration-200
                       ${isSelected ? 'text-green-600 font-semibold scale-110' : 'hover:scale-105'}
-                    }
+                    `}
                     style={{ transformOrigin: 'center' }}
                   >
                     {label}
@@ -103,9 +101,9 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
                         <li key={key}>
                           <button
                             onClick={() => handlePageChange(key)}
-                            className={w-full text-left px-6 py-3 transition-colors ${
+                            className={`w-full text-left px-6 py-3 transition-colors ${
                               isSelected ? 'bg-green-600 text-white font-semibold' : 'text-gray-700 hover:bg-green-100'
-                            }}
+                            }`}
                           >
                             {label}
                           </button>
@@ -162,7 +160,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
         </div>
       )}
 
-      <style jsx>{
+      <style jsx>{`
         @keyframes zoomIn {
           0% {
             transform: scale(0);
@@ -202,7 +200,7 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
         .animate-emojiMove span:nth-child(4) {
           animation-delay: 0.6s;
         }
-      }</style>
+      `}</style>
     </>
   );
 };

@@ -24,7 +24,7 @@ const InicioAnimado = ({ setCurrentPage }) => {
           100% { opacity: 1; transform: translateY(0); }
         }
         .animate-float-spin {
-          animation: float 6s ease-in-out infinite, spin 20s linear infinite;
+          animation: float 6s ease-in-out infinite, spin 60s linear infinite;
         }
         .animate-bounce-in {
           animation: bounceIn 1s ease-out;
@@ -34,15 +34,17 @@ const InicioAnimado = ({ setCurrentPage }) => {
         }
       `}</style>
 
-      {/* Símbolo de reciclaje real, animado */}
+      {/* Planeta animado de fondo */}
       <div className="absolute inset-0 flex items-center justify-center opacity-20">
         <svg
           className="w-64 h-64 text-white animate-float-spin"
-          viewBox="0 0 512 512"
+          viewBox="0 0 64 64"
           fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d="M244.7 75.1c8.1-14 24-22.4 40.3-22.4s32.2 8.4 40.3 22.4l45.2 77.8-27.7 16-45.2-77.8c-2.7-4.6-7.6-7.4-13-7.4s-10.3 2.8-13 7.4l-45.2 77.8-27.7-16 45.2-77.8zm156.4 96.9l78.9 45.5c14 8.1 22.4 24 22.4 40.3s-8.4 32.2-22.4 40.3l-77.8 45.2-16-27.7 77.8-45.2c4.6-2.7 7.4-7.6 7.4-13s-2.8-10.3-7.4-13l-77.8-45.2 16-27.7zm-23.2 267.9c-8.1 14-24 22.4-40.3 22.4s-32.2-8.4-40.3-22.4l-45.2-77.8 27.7-16 45.2 77.8c2.7 4.6 7.6 7.4 13 7.4s10.3-2.8 13-7.4l45.2-77.8 27.7 16-45.2 77.8zM110.7 339.2l-78.9-45.5C17.8 285.6 9.4 269.7 9.4 253.4s8.4-32.2 22.4-40.3l77.8-45.2 16 27.7-77.8 45.2c-4.6 2.7-7.4 7.6-7.4 13s2.8 10.3 7.4 13l77.8 45.2-16 27.7zM88.6 172.1l-45.5 78.9c-8.1 14-8.1 31.1 0 45.1l45.5 78.9c8.1 14 24 22.4 40.3 22.4s32.2-8.4 40.3-22.4l45.2-77.8-27.7-16-45.2 77.8c-2.7 4.6-7.6 7.4-13 7.4s-10.3-2.8-13-7.4l-45.2-77.8c-2.7-4.6-2.7-10.3 0-14.9l45.2-77.8-27.7-16z" />
+          <circle cx="32" cy="32" r="30" fill="currentColor" />
+          <path d="M2 32C2 34 14 40 32 40C50 40 62 34 62 32C62 30 50 24 32 24C14 24 2 30 2 32Z" fill="lightblue"/>
+          <path d="M16 20C18 16 28 14 34 18C40 22 42 30 46 34C50 38 54 40 54 40C54 40 52 42 50 42C44 42 40 36 36 32C30 26 22 28 18 24C16 22 16 20 16 20Z" fill="#4ade80"/>
         </svg>
       </div>
 

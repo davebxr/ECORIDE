@@ -28,6 +28,8 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
     setIsLogoutModalOpen(true);
   };
   const closeLogoutModal = () => setIsLogoutModalOpen(false);
+
+  // Cuando confirme cerrar sesión, mostrar pantalla final con animación
   const confirmLogout = () => {
     setIsLogoutModalOpen(false);
     setHasLoggedOut(true);
@@ -39,10 +41,10 @@ const LayoutHeader = ({ currentPage, setCurrentPage }) => {
         <>
           <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-20 flex items-center px-4 py-3">
             {/* Avatar izquierdo */}
-            <div className="flex items-center w-20 justify-center">
+            <div className="flex items-center w-20 justify-center relative">
               <div
                 onClick={toggleProfileMenu}
-                className="w-12 h-12 rounded-full border-4 border-green-600 cursor-pointer bg-black bg-[url('/danne.jpg')] bg-center bg-cover"
+                className="w-12 h-12 rounded-full border-4 border-green-600 cursor-pointer bg-center bg-cover bg-[url('/danne.jpg')]"
                 title="Perfil"
               ></div>
 

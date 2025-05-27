@@ -42,7 +42,7 @@ const InicioAnimado = ({ setCurrentPage }) => {
 
         .animate-tree {
           animation: float 6s ease-in-out infinite;
-          opacity: 0.2;
+          opacity: 0.25;
         }
 
         .leaf {
@@ -55,11 +55,12 @@ const InicioAnimado = ({ setCurrentPage }) => {
           animation: fall linear infinite;
         }
 
-        .leaf1 { left: 15%; animation-duration: 6s; animation-delay: 0s; }
-        .leaf2 { left: 30%; animation-duration: 8s; animation-delay: 1s; }
-        .leaf3 { left: 50%; animation-duration: 7s; animation-delay: 0.5s; }
-        .leaf4 { left: 70%; animation-duration: 9s; animation-delay: 2s; }
-        .leaf5 { left: 85%; animation-duration: 6.5s; animation-delay: 1.2s; }
+        .leaf1 { left: 10%; animation-duration: 6s; animation-delay: 0s; }
+        .leaf2 { left: 25%; animation-duration: 7s; animation-delay: 1s; }
+        .leaf3 { left: 40%; animation-duration: 8s; animation-delay: 0.5s; }
+        .leaf4 { left: 55%; animation-duration: 9s; animation-delay: 2s; }
+        .leaf5 { left: 70%; animation-duration: 6.5s; animation-delay: 1.2s; }
+        .leaf6 { left: 85%; animation-duration: 8s; animation-delay: 0.8s; }
 
         .button-anim:hover {
           transform: scale(1.1);
@@ -68,29 +69,39 @@ const InicioAnimado = ({ setCurrentPage }) => {
         }
       `}</style>
 
-      {/* Árbol SVG bonito */}
+      {/* Árbol SVG más bonito */}
       <div className="absolute w-full h-full flex items-center justify-center pointer-events-none">
         <svg
-          className="w-[300px] h-[300px] animate-tree"
-          viewBox="0 0 64 64"
+          className="w-[350px] h-[350px] animate-tree"
+          viewBox="0 0 128 128"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path fill="#6B4226" d="M28 40h8v18h-8z" />
-          <circle cx="32" cy="20" r="14" fill="#22C55E" />
-          <circle cx="22" cy="24" r="10" fill="#16A34A" />
-          <circle cx="42" cy="24" r="10" fill="#16A34A" />
+          {/* Tronco */}
+          <path fill="#6B4226" d="M58 68h12v40H58z" />
+
+          {/* Copa principal */}
+          <circle cx="64" cy="40" r="24" fill="#22C55E" />
+          <circle cx="48" cy="48" r="18" fill="#16A34A" />
+          <circle cx="80" cy="48" r="18" fill="#16A34A" />
+          <circle cx="64" cy="60" r="20" fill="#15803D" />
+
+          {/* Hojas extra */}
+          <ellipse cx="40" cy="40" rx="8" ry="6" fill="#22C55E" />
+          <ellipse cx="88" cy="40" rx="8" ry="6" fill="#22C55E" />
+          <ellipse cx="64" cy="24" rx="6" ry="8" fill="#22C55E" />
         </svg>
       </div>
 
-      {/* Hojas verdes cayendo alrededor */}
+      {/* Hojas verdes cayendo */}
       <div className="leaf leaf1" />
       <div className="leaf leaf2" />
       <div className="leaf leaf3" />
       <div className="leaf leaf4" />
       <div className="leaf leaf5" />
+      <div className="leaf leaf6" />
 
-      {/* Contenido principal con efecto parallax */}
+      {/* Contenido principal con efecto de seguimiento del mouse */}
       <div
         className="relative z-10 text-center transition-transform duration-200 ease-out"
         style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}

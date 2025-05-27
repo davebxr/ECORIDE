@@ -46,7 +46,7 @@ const Juegos = ({ userData, setUserData }) => {
           const newMatched = [...matched, i1, i2];
           setMatched(newMatched);
           setSelected([]);
-          addPoints(120);
+          addPoints(25);  // <-- Aquí cambió de 120 a 25
           setShowStars(true);
           setTimeout(() => setShowStars(false), 1000);
 
@@ -90,7 +90,7 @@ const Juegos = ({ userData, setUserData }) => {
                 onClick={() => setCurrentGame('memorama')}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
               >
-                Jugar (120 puntos)
+                Jugar (25 puntos) {/* Cambié esto también */}
               </button>
             </div>
           </div>
@@ -140,7 +140,7 @@ const Juegos = ({ userData, setUserData }) => {
                 <h1 className="text-4xl md:text-6xl font-bold text-green-800 mb-4 animate-bounce">
                   🎉 ¡Felicidades, lo completaste! 🎉
                 </h1>
-                <p className="text-2xl text-green-700 font-semibold">+120 puntos</p>
+                <p className="text-2xl text-green-700 font-semibold">+25 puntos</p> {/* Aquí también */}
                 <button
                   onClick={resetGame}
                   className="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
